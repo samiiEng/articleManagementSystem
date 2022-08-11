@@ -14,8 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('messages', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id('message_id');
+            $table->string('title', 50);
+            $table->longText('body');
+            $table->unsignedBigInteger('from_ref_id');
+            $table->unsignedBigInteger('to_ref_id');
+            $table->timestampsTz();
+            $table->softDeletesTz();
         });
     }
 
