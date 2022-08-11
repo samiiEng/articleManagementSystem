@@ -13,7 +13,7 @@
 <body>
 <div class="nav">
     <nav>
-        <ul>
+        <ul class="flex">
             {{--      Check if the user is logged in so the login/register links should be hidden
                   and the avatar icon should be shown--}}
             @if(auth()->user())
@@ -29,13 +29,11 @@
 
 <div class="main">
     @section('main')
-        <p>
-            .به سیستم مدیریت مقالات خوش آمدید
-        </p>
+
     @show
 </div>
 
 
-<script src="{{resource_path('js\jquery\jquery.js')}}" type="text/javascript"></script>
+<script src="{{asset('javascript/jquery/jquery.js')}}" type="text/javascript"></script>
 </body>
 </html>

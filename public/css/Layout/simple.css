@@ -1,5 +1,6 @@
 /*General Styles*/
 * {
+    direction: rtl;
     box-sizing: border-box;
     padding: 0;
     margin: 0;
@@ -10,7 +11,7 @@ a {
     color: black;
 }
 
-a:hover{
+a:hover {
     opacity: 0.3;
     color: blue;
 }
@@ -19,4 +20,26 @@ li {
     list-style: none;
 }
 
+.noneDisplay{
+    display: none;
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: space-around;
+    justify-content: space-around;
+    justify-items: center;
+}
+
 /*Navigation bar*/
+.nav {
+    background-color : #cebaba;
+    padding: 5px;
+    border-radius: 20px;
+    font-weight: bold;
+    
+}
+
