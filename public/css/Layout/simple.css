@@ -1,0 +1,22 @@
+/*General Styles*/
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+a:hover{
+    opacity: 0.3;
+    color: blue;
+}
+
+li {
+    list-style: none;
+}
+
+/*Navigation bar*/

@@ -1,1 +1,1 @@
-<?php
+@extends('Layout.simple')
