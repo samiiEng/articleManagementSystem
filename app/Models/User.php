@@ -41,4 +41,23 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected $primaryKey = 'user_id';
+
+    public function messagesFrom()
+    {
+        $this->hasMany(Message::class, 'from_ref_id', 'user_id');
+    }
+
+    public function messagesTo()
+    {
+        $this->hasMany(Message::class, 'to_ref_id', 'user_id');
+    }
+
+    public function articlesAuthor()
+    {
+        return $this->hasMany(Article::class, 'user_ref_id', 'user_id');
+    }
+
+
 }

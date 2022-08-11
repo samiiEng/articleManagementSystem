@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Tag extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'tag_id';
+
+    public function departmentsCategories(){
+        return $this->belongsTo(DepartmentCategory::class, 'department_category_ref_id', 'department_category_id');
+    }
 }

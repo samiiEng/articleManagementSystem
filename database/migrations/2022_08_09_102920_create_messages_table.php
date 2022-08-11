@@ -19,6 +19,7 @@ return new class extends Migration
             $table->longText('body');
             $table->unsignedBigInteger('from_ref_id');
             $table->unsignedBigInteger('to_ref_id');
+            $table->string('status', '20');
             $table->timestampsTz();
             $table->softDeletesTz();
         });
