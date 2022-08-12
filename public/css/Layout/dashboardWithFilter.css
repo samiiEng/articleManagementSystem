@@ -34,12 +34,21 @@ li {
     justify-items: center;
 }
 
+.clear {
+    clear: both;
+}
+
 /*Navigation bar*/
 .nav {
     background-color : #cebaba;
     padding: 5px;
     border-radius: 20px;
     font-weight: bold;
-
 }
+
+.main, .filters {
+    float: left;
+}
+
+
 

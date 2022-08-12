@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\filter\FilterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,8 +14,16 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-use App\Http\Controllers\UserController;
 Route::get('/', function () {
-    return view('firstPage');
+    return view('welcome');
 });
+
+Route::prefix('/dashboard/')->name('dashboard.')->group(function (){
+    Route::get('defineArticle', [ArticleController::class, 'create'])->name('defineArticle.create');
+    Route::post('defineArticle', [ArticleController::class, 'store'])->name('defineArticle.store');
+
+});
+
+Route::post('filter', [FilterController::class, 'filter'])->name('filter.filter');
+
 

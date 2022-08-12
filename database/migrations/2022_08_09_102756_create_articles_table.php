@@ -20,12 +20,14 @@ return new class extends Migration
             $table->string('category_ref_id', 50);
             $table->string('tag_ref_id', 50);
             $table->unsignedBigInteger('user_ref_id');
-            $table->string('article_ref_id', 150)->nullable();
+            $table->string('contributor_article_ref_id', 150)->nullable();
             $table->string('waiting_contributor_ref_id', 150)->nullable();
             $table->string('rejected_contributor_ref_id', 150)->nullable();
+            $table->string('published_articles_ref_id', 150)->nullable();
             $table->string('parent_ref_id')->nullable();
             $table->unsignedBigInteger('revision_ref_id')->nullable();
             $table->unsignedInteger('revision_number')->nullable();
+            $table->dateTimeTz('publish_date')->nullable();
             $table->string('status', 50);
             $table->timestampsTz();
             $table->softDeletesTz();

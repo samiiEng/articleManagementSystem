@@ -24,7 +24,7 @@
 </div>
 
 <div class="filters">
-    @section('')
+    @section('filters')
     @show
 </div>
 
@@ -33,9 +33,12 @@
 
     @show
 </div>
-
+<div class="clear"></div>
 
 <script src="{{asset('javascript/jquery/jquery.js')}}" type="text/javascript"></script>
+@section('resourcesScripts')
+
+@show
 </body>
 </html>
 
