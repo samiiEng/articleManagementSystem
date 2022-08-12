@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{asset('css/Layout/simple.css')}}">
     @section('resourcesLinks')
     @show
-    <title>سیستم مدیریت مقالات</title>
+    <title>@yield('title')</title>
 </head>
 <body>
 <div class="nav">

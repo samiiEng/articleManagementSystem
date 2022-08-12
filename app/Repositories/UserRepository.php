@@ -2,14 +2,19 @@
 
 namespace App\Repositories;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Models\User;
+use Illuminate\Http\Request;
+
 class UserRepository
 {
-    public function create()
+    public function create($validated)
     {
+
 
     }
 
-    public function update()
+    public function update($validated)
     {
 
     }
