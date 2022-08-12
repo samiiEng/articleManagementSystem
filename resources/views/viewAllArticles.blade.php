@@ -1,7 +1,7 @@
 @extends('Layout.dashboardWithFilter')
 
 @section('resourcesLinks')
-    <link rel="stylesheet" href="{{asset('css/filters.css')}}">
+    @parent
 @endsection
 
 @section('title', 'مقالات موجود')
@@ -76,14 +76,37 @@
 
         </fieldset>
     </form>
-
-
 @endsection
 
 @section('main')
     <table>
         <tr>
-            <th></th>
+            <th>سطر</th>
+            <th>تیتر</th>
+            <th>خلاصه</th>
+            <th>نویسنده</th>
+            {{--      check if this is the user's own article       --}}
+            @if()
+                <th></th>
+                <th></th>
+            @endif
         </tr>
+
+        @if()
+            @foreach()
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    {{--      check if this is the user's own article       --}}
+                    @if()
+                        <td><a href="">ویرایش</a></td>
+                        <td><a href="">درخواست حذف</a></td>
+                    @endif
+                </tr>
+            @endforeach
+        @endif
+
     </table>
 @endsection

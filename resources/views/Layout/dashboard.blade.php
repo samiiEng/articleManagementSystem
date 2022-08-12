@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{asset('css/Layout/dashboard.css')}}">
     @section('resourcesLinks')
+        <link rel="stylesheet" href="{{asset('css/filters.css')}}">
     @show
     <title>@yield('title')</title>
 </head>

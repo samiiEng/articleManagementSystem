@@ -25,6 +25,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('role', 50)->nullable();
             $table->json('extra')->nullable();
+            $table->boolean('is_normal');
             $table->rememberToken();
             $table->timestampsTz();
             $table->softDeletesTz();
