@@ -3,7 +3,7 @@
 @section('resourcesLinks')
 
 @endsection
-@section('title', '')
+@section('title', 'سیستم مدیریت مقالات')
 
 @section('main')
     @parent
