@@ -27,6 +27,8 @@ class ArticleController extends Controller
     public function create()
     {
 
+        //call the FilterController for passing the radio buttons to the view
+
     }
 
     /**

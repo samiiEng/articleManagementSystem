@@ -1,47 +1,70 @@
 $(document).ready(function () {
+    var baseURI = "http://localhost/cmsManagementSystem/public";
 
-    $('.showSearch').click(function (){
-       var filterElement = $(this).attr("id");
-       var form = filterElement.find('form');
+    $('.showSearch').click(function () {
+        //show loading icon
 
-       //finding all checked radio buttons
-       var checkedButtons = form.find('input[type=radio]:checked');
-       var fieldsetParents = [];
+        var showSearchButtonID = $(this).attr("id");
+        var filterElement = $('div.' + showSearchButtonID);
+        var form = filterElement.find('form');
 
-       //each result have the condition name with the corresponding table name
-       var results = [];
-        checkedButtons.each(function (){
-            fieldsetParents = $(this).parent('fieldset').attr('class');
+        //finding all checked radio buttons
+        var checkedButtons = form.find('input[type=radio]:checked');
+
+        //each result have the condition name with the corresponding table name
+        var results = [];
+        var i = 0;
+        checkedButtons.each(function () {
+            i++;
+            //fieldsetParent is the table name
+            var fieldsetParent = $(this).parent('fieldset').attr('class');
+            results[i] = [fieldsetParent, $(this).val()];
         });
-    });
 
-    var forms = [];
-    $('div.filters').find('form').each(function () {
-        forms = $(this).attr('class');
-    });
+        //send conditions to controller by ajax
+        $.ajax({
+            type: 'POST',
+            url: baseURI + "/showSearch",
+            dataType: "json",
+            data: JSON.stringify(results),
+            success: function (data) {
+                // Show search boxes and fill them with results
+                var search = null;
 
-    formsFieldsets = [];
-    var i = 0;
-    forms.each(function () {
-        i++;
-        var fields = [];
-        fields = $(this).find('fieldset');
+                if (showSearchButtonID == 'contributorsFilters') {
+                    search = "<div class=\"contributorsSearchByUsername\">\n" +
+                        "                <label for=\"searchUsername\">\n" +
+                        "                    <input type=\"text\" name=\"searchUsername\" id=\"searchUsername\">\n" +
+                        "                </label>\n" +
+                        "                <button type=\"button\" id=\"contributorsFiltersPost\">search</button>\n" +
+                        "            </div>";
+                } else if (showSearchButtonID == 'usePublishedArticlesFilters') {
+                    search = "<div class=\"usePublishedArticlesSearchByUsername\">\n" +
+                        "                <label for=\"searchUsername\">\n" +
+                        "                    <input type=\"text\" name=\"searchUsername\" id=\"searchUsername\">\n" +
+                        "                </label>\n" +
+                        "                <button type=\"button\" id=\"searchPublishedArticlesByUsername\">search</button>\n" +
+                        "            </div>" +
+                        "<div class=\"usePublishedArticlesSearchByTitle\">\n" +
+                        "                <label for=\"searchTitle\">\n" +
+                        "                    <input type=\"text\" name=\"searchTitle\" id=\"searchTitle\">\n" +
+                        "                </label>\n" +
+                        "                <button type=\"button\" id=\"searchPublishedArticlesByTitle\">search</button>\n" +
+                        "            </div>";
 
-        var fieldsets = [];
-        fields.each(function () {
-            fieldsets = $(this).attr('class');
+                }
+
+                $('button#' + showSearchButtonID).after(search);
+            },
+            error: function (error) {
+                alert("<div class='singleLineError'>error</div>");
+            }
         });
-        formsFieldsets[i] = [$(this), fieldsets];
-    });
 
-    makeListenerForRadioButtons(formsFieldsets);
+    });
 
 
 //***************************************************** FUNCTIONS DEFINITIONS *********************************************
-    function makeListenerForRadioButtons(formsFieldSets) {
-
-
-    }
 
 
     function filter($conditions) {

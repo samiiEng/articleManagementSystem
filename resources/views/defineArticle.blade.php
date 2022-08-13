@@ -12,7 +12,7 @@
 
 @section('filters')
     <div class="contributorsFilters">
-        <form action="{{route('filter.filter')}}" method="post">
+        <form action="{{route('')}}" method="post">
             @if(!empty($departments))
                 <fieldset class="departments">
                     {{--       getting from the departments table         --}}
@@ -22,11 +22,12 @@
                         {{--          see all users withing the parent department          --}}
                         <label for="{{$department[0]->english_name}}">{{$department[0]}}
                             <input type="radio" value="{{$department[0]->english_name}}"
-                                   name="departments">
+                                   name="departments" id="{{$department[0]->english_name}}">
                         </label>
                         @foreach($department[1] as $record)
                             <label for="{{$record->english_name}}">{{$record}}
-                                <input type="radio" value="{{$record->english_name}}" name="departments">
+                                <input type="radio" value="{{$record->english_name}}"
+                                       name="departments" id="{{$record->english_name}}">
                             </label>
                         @endforeach
                     @endforeach
@@ -36,23 +37,24 @@
 
             <button type="button" value="showSearch" id="contributorsFilters"></button>
 
-            <div class="contributorsFinalSearch">
-                <label for="searchUsername">
-                    <input type="text" name="searchUsername" id="searchUsername">
-                </label>
-                {{--      This box is shown by ajax when it retrieves the records from the DB     --}}
-                <div class="contributorsFiltersResult">
-                    <div class="contributorsFiltersRecord{{_$username}}">
-                        {{$username}}
-                    </div>
-                </div>
-            </div>
 
-            <button type="button" id="contributorsFiltersPost">search</button>
+            {{--      This box is shown by ajax when it retrieves the records from the DB     --}}
+            {{--<div class="contributorsFiltersResult">
+                <div class="contributorsFiltersRecord{{_$username}}">
+                    {{$username}}
+                </div>
+            </div>--}}
+
+
         </form>
     </div>
 
-    <div class="useFinishedArticlesFilters">
+
+
+
+
+
+    <div class="usePublishedArticlesFilters">
         <form action="" method="post">
             <fieldset class="departments">
                 {{--       getting from the departments table         --}}
@@ -72,9 +74,15 @@
                 @endforeach
             </fieldset>
 
-            <label for="searchUsername">
-                <input type="text" name="searchUsername" id="searchUsername">
-            </label>
+            <button type="button" value="showSearch" id="usePublishedArticlesFilters"></button>
+
+
+            <div class="usePublishedArticlesSearchByUsername">
+                <label for="searchUsername">
+                    <input type="text" name="searchUsername" id="searchUsername">
+                </label>
+                <button type="button" id="searchPublishedArticlesByUsername">search</button>
+            </div>
             {{--      This box is shown by ajax when it retrieves the records from the DB     --}}
             <div class="usernamesContributorsFiltersResult">
                 <div class="usernamesContributorsFiltersRecord{{_$username}}">
@@ -82,9 +90,13 @@
                 </div>
             </div>
 
-            <label for="searchTitle">
-                <input type="text" name="searchTitle" id="searchTitle">
-            </label>
+
+
+            <div class="usePublishedArticlesSearchByTitle">
+                <label for="searchTitle">
+                    <input type="text" name="searchTitle" id="searchTitle">
+                </label>
+            </div>
             {{--      This box is shown by ajax when it retrieves the records from the DB     --}}
             <div class="titlesArticlesFiltersResult">
                 <div class="titlesArticlesFiltersRecord{{_$titlename}}">
@@ -92,7 +104,7 @@
                 </div>
             </div>
 
-            <button type="button" id="articlesFiltersPost">search</button>
+            <button type="button" id="searchPublishedArticlesByTitle">search</button>
         </form>
     </div>
 @endsection
@@ -116,7 +128,7 @@
             <button type="button" id="deleteContributors">delete contributors</button>
         </div>
 
-        <div class="useFinishedArticles">
+        <div class="usePublishedArticles">
             <p>{{$articleTitle}}</p>
             <button type="button" id="deleteArticle">delete article</button>
         </div>

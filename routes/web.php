@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\filter\FilterController;
+use App\Http\Controllers\Filter\FilterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,6 +24,9 @@ Route::prefix('/dashboard/')->name('dashboard.')->group(function (){
 
 });
 
+//Route to filterController
 Route::post('filter', [FilterController::class, 'filter'])->name('filter.filter');
+Route::post('showSearch', [FilterController::class, 'showSearch'])->name('showSearch.showSearch');
+
 
 
