@@ -7,105 +7,43 @@
 @section('title', 'تعریف مقاله')
 
 @section('resourcesScripts')
-    <script src="{{asset('javascript/script.js')}}" type="text/javascript"></script>
+    <script src="{{asset('javascript/defineController.js')}}" type="text/javascript"></script>
 @endsection
 
 @section('filters')
-    <div class="contributorsFilters">
-        <form action="{{route('')}}" method="post">
-            @if(!empty($departments))
+    <div class="contributorsFilter">
+        <div class="department">
+            <p>دپارتمانی که کاربر مدنظر در آن قرار دارد را انتخاب کنید:</p>
+            <form action="" method="post">
                 <fieldset class="departments">
-                    {{--       getting from the departments table         --}}
+                    @if($departments)
+                        @foreach($departments as $department)
+                            <p class="parent">{{$department[0]}}</p>
 
-                    @foreach($departments as $department)
-                        <div>گروه دپارتمان {{$department[0]}}</div>
-                        {{--          see all users withing the parent department          --}}
-                        <label for="{{$department[0]->english_name}}">{{$department[0]}}
-                            <input type="radio" value="{{$department[0]->english_name}}"
-                                   name="departments" id="{{$department[0]->english_name}}">
-                        </label>
-                        @foreach($department[1] as $record)
-                            <label for="{{$record->english_name}}">{{$record}}
-                                <input type="radio" value="{{$record->english_name}}"
-                                       name="departments" id="{{$record->english_name}}">
+                            <label for="{{$department[0]->english_name}}">{{$department[0]}}
+                                <input type="radio" name="departments" id="{{$department[0]->english_name}}">
                             </label>
+
+                            @foreach($department[1] as $record)
+                                <label for="{{$record->english_name}}">{{$record}}
+                                    <input type="radio" name="departments" id="{{$record->english_name}}">
+                                </label>
+                            @endforeach
                         @endforeach
-                    @endforeach
-
+                    @endif
                 </fieldset>
-            @endif
-
-            <button type="button" value="showSearch" id="contributorsFilters"></button>
 
 
-            {{--      This box is shown by ajax when it retrieves the records from the DB     --}}
-            {{--<div class="contributorsFiltersResult">
-                <div class="contributorsFiltersRecord{{_$username}}">
-                    {{$username}}
-                </div>
-            </div>--}}
 
 
-        </form>
+
+            </form>
+        </div>
     </div>
 
 
+    <div class="publishedArticlesFilter">
 
-
-
-
-    <div class="usePublishedArticlesFilters">
-        <form action="" method="post">
-            <fieldset class="departments">
-                {{--       getting from the departments table         --}}
-                @foreach()
-                    <label for="">
-                        <input type="radio" name="" id="">
-                    </label>
-                @endforeach
-            </fieldset>
-
-            <fieldset class="categories">
-                {{--       getting from the categories table         --}}
-                @foreach()
-                    <label for="">
-                        <input type="radio" name="" id="">
-                    </label>
-                @endforeach
-            </fieldset>
-
-            <button type="button" value="showSearch" id="usePublishedArticlesFilters"></button>
-
-
-            <div class="usePublishedArticlesSearchByUsername">
-                <label for="searchUsername">
-                    <input type="text" name="searchUsername" id="searchUsername">
-                </label>
-                <button type="button" id="searchPublishedArticlesByUsername">search</button>
-            </div>
-            {{--      This box is shown by ajax when it retrieves the records from the DB     --}}
-            <div class="usernamesContributorsFiltersResult">
-                <div class="usernamesContributorsFiltersRecord{{_$username}}">
-                    {{$username}}
-                </div>
-            </div>
-
-
-
-            <div class="usePublishedArticlesSearchByTitle">
-                <label for="searchTitle">
-                    <input type="text" name="searchTitle" id="searchTitle">
-                </label>
-            </div>
-            {{--      This box is shown by ajax when it retrieves the records from the DB     --}}
-            <div class="titlesArticlesFiltersResult">
-                <div class="titlesArticlesFiltersRecord{{_$titlename}}">
-                    {{$titlename}}
-                </div>
-            </div>
-
-            <button type="button" id="searchPublishedArticlesByTitle">search</button>
-        </form>
     </div>
 @endsection
 

@@ -28,6 +28,7 @@ class FilterRepository
             $i++;
             $departments[$i] = [$departmentsParent, $departmentsChildren];
         }
+        return $departments;
 
     }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Filter\FilterController;
 use App\Models\Article;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
@@ -24,10 +25,9 @@ class ArticleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(FilterController $filterController)
     {
-
-        //call the FilterController for passing the radio buttons to the view
+        return $filterController->retrievingDepartments(['defineArticle']);
 
     }
 

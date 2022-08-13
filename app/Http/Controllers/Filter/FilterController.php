@@ -17,8 +17,9 @@ class FilterController extends Controller
      * This function has no prior filter and just retrieves all departments
      */
     public
-    function retrievingDepartments(FilterRepository $filterRepository, $filters)
+    function retrievingDepartments($filters)
     {
+        $filterRepository = new FilterRepository();
         $departments = $filterRepository->retrievingDepartments();
         return response()->view("{{$filters[0]}}", ['departments' => $departments]);
     }
@@ -28,12 +29,14 @@ class FilterController extends Controller
      */
     public function retrievingDepartmentBasedCategories(FilterRepository $filterRepository, $filters)
     {
-        $categories = $filterRepository->retrievingDepartmentBasedCategories($filters);
-        return response()->view("$filters[0]", ["categories" => "$categories"]);
+       /* $categories = $filterRepository->retrievingDepartmentBasedCategories($filters);
+        return response()->view("$filters[0]", ["categories" => "$categories"]);*/
     }
 
     public function retrievingUsernamesByDepartments(FilterRepository $filterRepository, $filters)
     {
+
+
 
     }
 
