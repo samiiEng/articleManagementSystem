@@ -18,7 +18,7 @@ class DepartmentPolicy
      */
     public function viewAny(User $user)
     {
-        //
+
     }
 
     /**

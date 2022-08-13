@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
+use App\Models\Department;
 
 class ArticleController extends Controller
 {
@@ -25,7 +26,7 @@ class ArticleController extends Controller
      */
     public function create()
     {
-        return response()->view('defineArticle');
+
     }
 
     /**

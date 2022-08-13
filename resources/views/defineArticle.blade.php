@@ -12,23 +12,37 @@
 
 @section('filters')
     <div class="contributorsFilters">
-        <form action="" method="post">
-            <fieldset>
-                {{--       getting from the departments table         --}}
-                @foreach()
-                    <label for="">
-                        <input type="radio" name="" id="">
-                    </label>
-                @endforeach
-            </fieldset>
+        <form action="{{route('filter.filter')}}" method="post">
+            @if(!empty($departments))
+                <fieldset class="departments">
+                    {{--       getting from the departments table         --}}
 
-            <label for="searchUsername">
-                <input type="text" name="searchUsername" id="searchUsername">
-            </label>
-            {{--      This box is shown by ajax when it retrieves the records from the DB     --}}
-            <div class="contributorsFiltersResult">
-                <div class="contributorsFiltersRecord{{_$username}}">
-                    {{$username}}
+                    @foreach($departments as $department)
+                        <div>گروه دپارتمان {{$department[0]}}</div>
+                        {{--          see all users withing the parent department          --}}
+                        <label for="{{$department[0]->english_name}}">{{$department[0]}}
+                            <input type="radio" value="{{$department[0]->english_name}}"
+                                   name="{{$department[0]->english_name}}" id="{{$department[0]->english_name}}">
+                        </label>
+                        @foreach($department[1] as $record)
+                            <label for="{{$record->english_name}}">{{$record}}
+                                <input type="radio" value="{{$record->english_name}}" name="{{$record->english_name}}"
+                                       id="{{$record->english_name}}">
+                            </label>
+                        @endforeach
+                    @endforeach
+
+                </fieldset>
+            @endif
+            <div class="contributorsFinalSearch">
+                <label for="searchUsername">
+                    <input type="text" name="searchUsername" id="searchUsername">
+                </label>
+                {{--      This box is shown by ajax when it retrieves the records from the DB     --}}
+                <div class="contributorsFiltersResult">
+                    <div class="contributorsFiltersRecord{{_$username}}">
+                        {{$username}}
+                    </div>
                 </div>
             </div>
 
@@ -38,7 +52,7 @@
 
     <div class="useFinishedArticlesFilters">
         <form action="" method="post">
-            <fieldset>
+            <fieldset class="departments">
                 {{--       getting from the departments table         --}}
                 @foreach()
                     <label for="">
@@ -47,7 +61,7 @@
                 @endforeach
             </fieldset>
 
-            <fieldset>
+            <fieldset class="categories">
                 {{--       getting from the categories table         --}}
                 @foreach()
                     <label for="">
