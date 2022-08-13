@@ -22,18 +22,20 @@
                         {{--          see all users withing the parent department          --}}
                         <label for="{{$department[0]->english_name}}">{{$department[0]}}
                             <input type="radio" value="{{$department[0]->english_name}}"
-                                   name="{{$department[0]->english_name}}" id="{{$department[0]->english_name}}">
+                                   name="departments">
                         </label>
                         @foreach($department[1] as $record)
                             <label for="{{$record->english_name}}">{{$record}}
-                                <input type="radio" value="{{$record->english_name}}" name="{{$record->english_name}}"
-                                       id="{{$record->english_name}}">
+                                <input type="radio" value="{{$record->english_name}}" name="departments">
                             </label>
                         @endforeach
                     @endforeach
 
                 </fieldset>
             @endif
+
+            <button type="button" value="showSearch" id="contributorsFilters"></button>
+
             <div class="contributorsFinalSearch">
                 <label for="searchUsername">
                     <input type="text" name="searchUsername" id="searchUsername">

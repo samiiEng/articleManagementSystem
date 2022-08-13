@@ -1,5 +1,20 @@
 $(document).ready(function () {
 
+    $('.showSearch').click(function (){
+       var filterElement = $(this).attr("id");
+       var form = filterElement.find('form');
+
+       //finding all checked radio buttons
+       var checkedButtons = form.find('input[type=radio]:checked');
+       var fieldsetParents = [];
+
+       //each result have the condition name with the corresponding table name
+       var results = [];
+        checkedButtons.each(function (){
+            fieldsetParents = $(this).parent('fieldset').attr('class');
+        });
+    });
+
     var forms = [];
     $('div.filters').find('form').each(function () {
         forms = $(this).attr('class');
@@ -24,6 +39,7 @@ $(document).ready(function () {
 
 //***************************************************** FUNCTIONS DEFINITIONS *********************************************
     function makeListenerForRadioButtons(formsFieldSets) {
+
 
     }
 
