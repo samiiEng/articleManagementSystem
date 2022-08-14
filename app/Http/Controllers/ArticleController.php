@@ -7,6 +7,8 @@ use App\Models\Article;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Department;
+use \Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -25,16 +27,18 @@ class ArticleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(FilterController $filterController)
+    public function create(FilterController $filterController, Request $request)
     {
-        return $filterController->retrievingDepartments(['defineArticle']);
+        $departments = $filterController->retrievingDepartments();
+//        return response()->view("defineArticle", ['departments' => $departments]);
+        return response()->json(['status' => 'success', 'message' => '', 'data' => 'This is the define Article page']);
 
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreArticleRequest  $request
+     * @param \App\Http\Requests\StoreArticleRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(StoreArticleRequest $request)
@@ -45,7 +49,7 @@ class ArticleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Article  $article
+     * @param \App\Models\Article $article
      * @return \Illuminate\Http\Response
      */
     public function show(Article $article)
@@ -56,7 +60,7 @@ class ArticleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Article  $article
+     * @param \App\Models\Article $article
      * @return \Illuminate\Http\Response
      */
     public function edit(Article $article)
@@ -67,8 +71,8 @@ class ArticleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateArticleRequest  $request
-     * @param  \App\Models\Article  $article
+     * @param \App\Http\Requests\UpdateArticleRequest $request
+     * @param \App\Models\Article $article
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateArticleRequest $request, Article $article)
@@ -79,7 +83,7 @@ class ArticleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Article  $article
+     * @param \App\Models\Article $article
      * @return \Illuminate\Http\Response
      */
     public function destroy(Article $article)

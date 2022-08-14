@@ -4,6 +4,7 @@ namespace App\Repositories\Filter;
 
 
 use App\Models\Department;
+use Illuminate\Support\Facades\DB;
 
 class FilterRepository
 {
@@ -19,12 +20,14 @@ class FilterRepository
     public
     function retrievingDepartments()
     {
-        $departmentsParents = Department::where('department_ref_id', null)->get();
+//        $departmentsParents = Department::where('department_ref_id', null)->get();
+        $departmentsParents = DB::select('SELECT * FROM departments WHERE department_ref_id = null');
         $departments = [];
         $i = 0;
         foreach ($departmentsParents as $departmentsParent) {
             $parentID = $departmentsParent->department_id;
-            $departmentsChildren = Department::where('department_ref_id', $parentID);
+//            $departmentsChildren = Department::where('department_ref_id', $parentID);
+            $departmentsChildren = DB::select('SELECT * FROM departments WHERE department_ref_id = ' . $parentID);
             $i++;
             $departments[$i] = [$departmentsParent, $departmentsChildren];
         }

@@ -17,3 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+use \App\Http\Controllers\ArticleController;
+Route::prefix('/dashboard')->name('dashboard.')->group(function (){
+    Route::get('/defineArticle', [ArticleController::class, 'create'])->name('defineArticle.create');
+
+});
