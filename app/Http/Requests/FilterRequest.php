@@ -12,10 +12,10 @@ class FilterRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+   /* public function authorize()
     {
         return false;
-    }
+    }*/
 
     /**
      * Get the validation rules that apply to the request.
@@ -24,7 +24,8 @@ class FilterRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        return [];
+        /*return [
             'outputTable' => 'required|string',
             'outputFields' => 'required|string',
             'hasDistinct' => 'required|boolean',
@@ -32,6 +33,6 @@ class FilterRequest extends FormRequest
             '*.operator' => 'required', Rule::in(['>', '=', '<', 'LIKE', 'IS NULL', 'IS NOT NULL']),
             '*.value' => 'nullable|string|integer',
             '*.next' => 'nullable', Rule::in(['AND', 'OR', 'AND (', 'OR (', ') OR', ') AND', ') AND (', ') OR (', ')']),
-        ];
+        ];*/
     }
 }

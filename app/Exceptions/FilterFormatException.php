@@ -3,18 +3,25 @@
 namespace App\Exceptions;
 
 use Exception;
+use JetBrains\PhpStorm\Internal\LanguageLevelTypeAware;
 use function Psy\debug;
 
 class FilterFormatException extends Exception
 {
-    public function render()
+
+    public function __construct(string $message = "<div>Your request is incorrectly formatted!</div>", int $code = 0, ?Throwable $previous = null)
     {
-        return response()->json("<div>Your request is incorrectly formatted!</div>");
+        parent::__construct($message, $code, $previous);
+    }
+
+    public function render($request)
+    {
+        return response()->json("$this->message");
     }
 
     public function report()
     {
-        $user = auth()->user()['username'];
-        error_log("<div>$user! Your request is incorrectly formatted!</div>");
+        /*$user = auth()->user()['username'];
+        error_log("<div>$user! <div>Your request is incorrectly formatted!</div>");*/
     }
 }

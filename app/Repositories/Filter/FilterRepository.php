@@ -13,7 +13,7 @@ class FilterRepository
 {
 
     /******** CONVENTION ********
-     * $filters ==> @array ==> ['output model/table', 'output fields' = [*], hasDistinct, [field1, operator, value, next(AND, OR, NULL)], [REPEAT PREVIOUS ARRAY], ....]
+     * $filters ==> @array ==> ['outputTable', 'outputFields' = [*], hasDistinct, [field, operator, value, next], [REPEAT PREVIOUS ARRAY], ....]
      */
 
 
@@ -46,39 +46,57 @@ class FilterRepository
         //until $i = 3, $outputTable, $outputFields, $hasDistinct must be filled otherwise an exception would be thrown!
         $i = 0;
         $arrayIndexesIterated = 0;
-        $length = sizeof($request);
+        $length = count($request->input());
+        $request = $request->input();
         $outputTable = null;
         $outputFields = null;
         $hasDistinct = null;
         $conditions = [];
         $conditionNumber = 0;
+        $field = null;
 
         foreach ($request as $key => $value) {
             if ($key == 'outputTable') {
                 $outputTable = $value;
-                ++$i;
                 ++$arrayIndexesIterated;
             }
             if ($key == 'outputFields') {
                 $outputFields = $value;
-                ++$i;
                 ++$arrayIndexesIterated;
             }
             if ($key == 'hasDistinct') {
                 $hasDistinct = $value;
-                ++$i;
                 ++$arrayIndexesIterated;
-            }
-            if ($i == 3 && ($hasDistinct == null OR $outputFields == null OR $outputTable == null)) {
-                throw new FilterFormatException();
             }
 
             /*
             All the previous indexes should have the correct format, must be initiated and we should not have
             repetitive indexes therefor $i == 3;
             */
+            ++$i;
+            if ($i == 1 && $outputTable == null) {
+                throw new FilterFormatException("outputTable index is either empty or the index is misspelled");
+            }
+            if ($i == 2 && $outputFields == null) {
+                throw new FilterFormatException("outputFields index is either empty or the index is misspelled");
+            }
 
-            if ($i == 3)
+            /*
+             * checking that if any overwrite has happened by having two outputTable or outputField keys then make sure that those
+             * values did not become null
+            */
+            if ($i == 3 && ($outputTable == null or $outputFields == null)) {
+                throw new FilterFormatException("outputTable or outputFields index are either empty or the indexes are misspelled");
+            }
+
+
+            /*
+            All the previous indexes should have the correct format, must be initiated and we should not have
+            repetitive indexes therefor $i == 3;
+            otherwise we can get the conditions part of the request input[field, operator, value, next].
+            */
+
+            if ($i == 3) {
                 foreach ($value as $itemKey => $item) {
                     if ($itemKey == 'field') {
                         $field = $item;
@@ -94,31 +112,41 @@ class FilterRepository
                     }
                 }
 
-            if ($field == null OR $operator == null) {
-                throw new FilterFormatException();
+                if ($field == null or $operator == null) {
+                    throw new FilterFormatException("Either your field or your operator index is misspelled or undefined");
+                }
+
+                if (($operator == 'IS NULL' or $operator == 'IS NOT NULL') && $value != null) {
+                    throw new FilterFormatException();
+                }
+
+                //if we still have conditions then next cannot be null!
+                ++$arrayIndexesIterated;
+                if ($arrayIndexesIterated != $length && $next != null)
+                    throw new FilterFormatException();
+
+                $conditions[$conditionNumber] = [$field, $operator, $value, $next];
+                ++$conditionNumber;
             }
-
-            if (($operator == 'IS NULL' OR $operator == 'IS NOT NULL') && $value != null) {
-                throw new FilterFormatException();
-            }
-
-            //if we still have conditions then next cannot be null!
-            ++$arrayIndexesIterated;
-            if ($arrayIndexesIterated != $length && $next != null)
-                throw new FilterFormatException();
-
-            $conditions[$conditionNumber] = [$field, $operator, $value, $next];
-            ++$conditionNumber;
         }
         //-------------- END OF  GETTING THE DIFFERENT PARTS OF SQL QUERY FROM THE REQUEST -----------------
 
-        $query = "SELECT $outputFields FROM $outputTable WHERE";
+        $query = "SELECT " . $hasDistinct . " " . $outputFields . " FROM " . $outputTable . " WHERE";
+        $valuesNumbers = 0;
+        $values = [];
         foreach ($conditions as $condition) {
-            $query += " ". $condition[0] . " " . $condition[1] . " " . $condition[2]  . " " . $condition[3];
+            $query += " " . $condition[0] . " " . $condition[1] . " ? " . $condition[3];
+            $values[$valuesNumbers] = $condition[2];
+            ++$valuesNumbers;
         }
 
-        $result = DB::select($query);
-        return $result;
+        $binding = [];
+        foreach ($values as $valueItem) {
+            $valueItem = !empty($valueItem) ? $valueItem : " ";
+            $binding[] = $valueItem;
+        }
+
+        return DB::select($query, $binding);
 
     }
 
