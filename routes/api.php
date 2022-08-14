@@ -23,8 +23,8 @@ use \App\Http\Controllers\Filter\FilterController;
 
 Route::prefix('dashboard/')->name('dashboard.')->group(function () {
     Route::get('defineArticle', [ArticleController::class, 'create'])->name('defineArticle.create');
-    Route::post('filterUsernamesByDepartments', [FilterController::class, 'filterOneModelMultiConditions'])->name('filterUsernamesByDepartments');
+    Route::post('filterUsernamesByDepartments', [FilterController::class, 'filterUsernamesByDepartments'])->name('filterUsernamesByDepartments');
     Route::get('hello', function () {
-        print_r(['helo' => 1, 'helo' =>2]);
+
     });
 });
