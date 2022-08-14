@@ -14,7 +14,7 @@ class Category extends Model
 
     public function departments()
     {
-        return $this->belongsToMany(Department::class, 'departments_categories', 'department_ref_id', 'department_id');
+        return $this->belongsToMany(Department::class, 'category_department', 'department_ref_id', 'department_id');
     }
 
     public function categoriesParent()

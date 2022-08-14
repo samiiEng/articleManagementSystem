@@ -13,7 +13,7 @@ class Department extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'departments_categories', 'category_ref_id', 'category_id');
+        return $this->belongsToMany(Category::class, 'category_department', 'category_ref_id', 'category_id');
     }
 
     public function departmentsParent(){
