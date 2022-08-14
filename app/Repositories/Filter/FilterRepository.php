@@ -54,6 +54,7 @@ class FilterRepository
         $conditions = [];
         $conditionNumber = 0;
         $field = null;
+        $continue = true;
 
         foreach ($request as $key => $value) {
             if ($key == 'outputTable') {
@@ -80,8 +81,12 @@ class FilterRepository
             if ($i == 3) {
                 if ($outputTable == null or $outputFields == null)
                     throw new FilterFormatException("outputTable or outputFields index are either empty or the indexes are misspelled");
-            } else if ($i == 3 && ($outputTable != null and $outputFields != null) && $i != $length) {
-
+            }
+            if ($i == 3 && ($outputTable != null and $outputFields != null) && $i != $length) {
+                if ($continue) {
+                    $continue = false;
+                    continue;
+                }
                 /*
                 All the previous indexes should have the correct format, must be initiated and we should not have
                 repetitive indexes therefor $i == 3;
@@ -128,13 +133,12 @@ class FilterRepository
         */
         if ($i < 3)
             if ($outputTable == null or $outputFields == null)
-                throw new FilterFormatException("You must have outputTable, outputFields and hasDistinct in
-            your request and first two must not be empty!");
+                throw new FilterFormatException("You must have outputTable, outputFields and hasDistinct in your request and first two must not be empty!");
 
         //========== NOTICE : $i == 3 means there are no conditions!!!!
 
         //-------------- END OF  GETTING THE DIFFERENT PARTS OF SQL QUERY FROM THE REQUEST -----------------
-        
+
         $query = "SELECT " . $hasDistinct . " " . $outputFields . " FROM " . $outputTable;
 
         //this makes this method to handle queries without conditions
@@ -144,9 +148,14 @@ class FilterRepository
             $valuesNumbers = 0;
             $values = [];
             foreach ($conditions as $condition) {
-                $query .= " " . $condition[0] . " " . $condition[1] . " ? " . $condition[3];
-                $values[$valuesNumbers] = $condition[2];
-                ++$valuesNumbers;
+                $questionMark = !empty($condition[2]) ? '?' : "";
+                $query .= " " . $condition[0] . " " . $condition[1] . " " . $questionMark . " " . $condition[3];
+
+                //only get the non-null values into the binding because the IS NULL/IS NOT NULL is always the last condition
+                if (!empty($condition[2])) {
+                    $values[$valuesNumbers] = $condition[2];
+                    ++$valuesNumbers;
+                }
             }
 
 
