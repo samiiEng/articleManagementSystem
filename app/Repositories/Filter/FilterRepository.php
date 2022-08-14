@@ -58,45 +58,36 @@ class FilterRepository
         foreach ($request as $key => $value) {
             if ($key == 'outputTable') {
                 $outputTable = $value;
+                ++$i;
                 ++$arrayIndexesIterated;
             }
             if ($key == 'outputFields') {
                 $outputFields = $value;
+                ++$i;
                 ++$arrayIndexesIterated;
             }
             if ($key == 'hasDistinct') {
                 $hasDistinct = $value;
+                ++$i;
                 ++$arrayIndexesIterated;
             }
 
-            /*
-            All the previous indexes should have the correct format, must be initiated and we should not have
-            repetitive indexes therefor $i == 3;
-            */
-            ++$i;
-            if ($i == 1 && $outputTable == null) {
-                throw new FilterFormatException("outputTable index is either empty or the index is misspelled");
-            }
-            if ($i == 2 && $outputFields == null) {
-                throw new FilterFormatException("outputFields index is either empty or the index is misspelled");
-            }
 
             /*
              * checking that if any overwrite has happened by having two outputTable or outputField keys then make sure that those
              * values did not become null
             */
-            if ($i == 3 && ($outputTable == null or $outputFields == null)) {
-                throw new FilterFormatException("outputTable or outputFields index are either empty or the indexes are misspelled");
-            }
-
-
-            /*
-            All the previous indexes should have the correct format, must be initiated and we should not have
-            repetitive indexes therefor $i == 3;
-            otherwise we can get the conditions part of the request input[field, operator, value, next].
-            */
-
             if ($i == 3) {
+                if ($outputTable == null or $outputFields == null)
+                    throw new FilterFormatException("outputTable or outputFields index are either empty or the indexes are misspelled");
+            } else if ($i == 3 && ($outputTable != null and $outputFields != null)) {
+                ++$i;
+                /*
+                All the previous indexes should have the correct format, must be initiated and we should not have
+                repetitive indexes therefor $i == 3;
+                otherwise we can get the conditions part of the request input[field, operator, value, next].
+                */
+
                 foreach ($value as $itemKey => $item) {
                     if ($itemKey == 'field') {
                         $field = $item;
@@ -127,8 +118,21 @@ class FilterRepository
 
                 $conditions[$conditionNumber] = [$field, $operator, $value, $next];
                 ++$conditionNumber;
+
             }
         }
+
+        /*
+         *This operates when we have no conditions and checks If the request's first two indexes are null
+         *this is because checking if those indexes are null only happens when $i == 3.
+        */
+        if ($i < 3)
+            if ($outputTable == null or $outputFields == null)
+                throw new FilterFormatException("You must have outputTable, outputFields and hasDistinct in
+            your request and first two must not be empty!");
+
+        //========== NOTICE : $i == 3 means there are no conditions!!!!
+
         //-------------- END OF  GETTING THE DIFFERENT PARTS OF SQL QUERY FROM THE REQUEST -----------------
 
         $query = "SELECT " . $hasDistinct . " " . $outputFields . " FROM " . $outputTable . " WHERE";
