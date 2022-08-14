@@ -29,9 +29,13 @@ class ArticleController extends Controller
      */
     public function create(FilterController $filterController, Request $request)
     {
-        $departments = $filterController->retrievingDepartments();
+        $departments = $filterController->retrieveDepartments();
 //        return response()->view("defineArticle", ['departments' => $departments]);
-        return response()->json(['status' => 'success', 'message' => '', 'data' => 'This is the define Article page']);
+        return response()->json(['status' => 'success', 'message' => '',
+            'data' => [
+                'This is the define Article page',
+                $departments,
+            ]], 200, array("Content-Type" => "application/json;charset=UTF-8"), JSON_UNESCAPED_UNICODE);
 
     }
 

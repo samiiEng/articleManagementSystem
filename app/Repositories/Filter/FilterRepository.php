@@ -10,7 +10,7 @@ class FilterRepository
 {
 
     /******** CONVENTION ********
-     * $filters ==> @array ==> [['filter table/model', 'filter value'], ...]
+     * $filters ==> @array ==> [['output model/table', 'output fields' = [*], [field1, operatior, value, next(AND, OR, NULL)], [REPEAT PREVIOUS ARRAY], ....]
      */
 
 
@@ -18,10 +18,10 @@ class FilterRepository
      * This function has no prior filter and just retrieves all departments
      */
     public
-    function retrievingDepartments()
+    function retrieveDepartments()
     {
 //        $departmentsParents = Department::where('department_ref_id', null)->get();
-        $departmentsParents = DB::select('SELECT * FROM departments WHERE department_ref_id = null');
+        $departmentsParents = DB::select('SELECT * FROM departments WHERE department_ref_id IS NULL');
         $departments = [];
         $i = 0;
         foreach ($departmentsParents as $departmentsParent) {
@@ -35,20 +35,28 @@ class FilterRepository
 
     }
 
-    /*
-     *
-     */
-    public function retrievingDepartmentBasedCategories($filters)
+    public function filterOneModelMultiConditions()
+    {
+
+
+    }
+
+    public function filterUsernamesByDepartments()
     {
 
     }
 
-    public function retrievingUsernamesByDepartments($filters)
+    public function filterCategoriesByDepartments($filters)
     {
 
     }
 
-    public function retrievingArticlesByDepartmentsCategories($filters)
+    public function filterUsernamesByCategoriesDepartments($filters)
+    {
+
+    }
+
+    public function filterArticlesByCategoriesDepartments($filters)
     {
 
     }

@@ -17,34 +17,35 @@ class FilterController extends Controller
      * This function has no prior filter and just retrieves all departments
      */
     public
-    function retrievingDepartments()
+    function retrieveDepartments()
     {
         $filterRepository = new FilterRepository();
-        $departments = $filterRepository->retrievingDepartments();
+        $departments = $filterRepository->retrieveDepartments();
         return $departments;
     }
 
-    public function oneModelMultiConditions()
-    {
-
-    }
-
-    /*
-     *
-     */
-    public function retrievingDepartmentBasedCategories(FilterRepository $filterRepository, $filters)
-    {
-        /* $categories = $filterRepository->retrievingDepartmentBasedCategories($filters);
-         return response()->view("$filters[0]", ["categories" => "$categories"]);*/
-    }
-
-    public function retrievingUsernamesByDepartments(FilterRepository $filterRepository, $filters)
+    public function filterOneModelMultiConditions()
     {
 
 
     }
 
-    public function retrievingArticlesByDepartmentsCategories(FilterRepository $filterRepository, $filters)
+    public function filterUsernamesByDepartments()
+    {
+
+    }
+
+    public function filterCategoriesByDepartments($filters)
+    {
+
+    }
+
+    public function filterUsernamesByCategoriesDepartments($filters)
+    {
+
+    }
+
+    public function filterArticlesByCategoriesDepartments($filters)
     {
 
     }

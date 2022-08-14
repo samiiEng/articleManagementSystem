@@ -19,7 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 use \App\Http\Controllers\ArticleController;
+use \App\Http\Controllers\Filter\FilterController;
+
 Route::prefix('/dashboard')->name('dashboard.')->group(function (){
     Route::get('/defineArticle', [ArticleController::class, 'create'])->name('defineArticle.create');
+    Route::post('filterUsernamesByDepartments', [FilterController::class, 'filterOneModelMultiConditions'])->name('filterUsernamesByDepartments');
 
 });
