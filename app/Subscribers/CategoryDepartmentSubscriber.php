@@ -2,7 +2,7 @@
 
 namespace App\Subscribers;
 
-class DepartmentCategorySubscriber
+class CategoryDepartmentSubscriber
 {
     public function __construct()
     {

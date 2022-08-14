@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-class DepartmentCategoryRepository
+class CategoryDepartmentRepository
 {
     public function create($validated)
     {

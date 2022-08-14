@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('departments_categories', function (Blueprint $table) {
-            $table->id('department_category_id');
+        Schema::create('category_department', function (Blueprint $table) {
+            $table->id('category_department_id');
             $table->unsignedBigInteger('department_ref_id');
             $table->unsignedBigInteger('category_ref_id');
         });

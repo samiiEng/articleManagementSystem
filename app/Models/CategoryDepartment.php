@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class DepartmentCategory extends Pivot
+class CategoryDepartment extends Pivot
 {
     protected $table = 'departments_categories';
     protected $primaryKey = 'department_category_id';

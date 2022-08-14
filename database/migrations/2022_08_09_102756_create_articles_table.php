@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id('article_id');
             $table->string('title', 100);
             $table->longText('body');
-            $table->string('category_ref_id', 50);
+            $table->string('category_department_ref_id', 50);
             $table->string('tag_ref_id', 50);
             $table->unsignedBigInteger('user_ref_id');
             $table->string('contributor_article_ref_id', 150)->nullable();

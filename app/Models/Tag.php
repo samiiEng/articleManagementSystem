@@ -12,6 +12,6 @@ class Tag extends Model
     protected $primaryKey = 'tag_id';
 
     public function departmentsCategories(){
-        return $this->belongsTo(DepartmentCategory::class, 'department_category_ref_id', 'department_category_id');
+        return $this->belongsTo(CategoryDepartment::class, 'department_category_ref_id', 'department_category_id');
     }
 }
