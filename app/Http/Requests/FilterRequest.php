@@ -29,9 +29,9 @@ class FilterRequest extends FormRequest
             'outputFields' => 'required|string',
             'hasDistinct' => 'required|boolean',
             '*.field' => 'required|string',
-            '*.operator' => 'required', Rule::in(['>', '=', '<', 'LIKE']),
-            '*.value' => 'required|string|integer',
-            '*.next' => 'required', Rule::in(['AND', 'OR', "NULL"])
+            '*.operator' => 'required', Rule::in(['>', '=', '<', 'LIKE', 'IS NULL', 'IS NOT NULL']),
+            '*.value' => 'nullable|string|integer',
+            '*.next' => 'nullable', Rule::in(['AND', 'OR', 'AND (', 'OR (', ') OR', ') AND', ') AND (', ') OR (', ')']),
         ];
     }
 }

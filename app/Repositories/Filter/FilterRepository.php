@@ -40,26 +40,36 @@ class FilterRepository
 
     public function filterOneModelMultiConditions($request)
     {
+
+        //************** GETTING THE DIFFERENT PARTS OF SQL QUERY FROM THE REQUEST ******************
+
         //until $i = 3, $outputTable, $outputFields, $hasDistinct must be filled otherwise an exception would be thrown!
         $i = 0;
+        $arrayIndexesIterated = 0;
+        $length = sizeof($request);
         $outputTable = null;
         $outputFields = null;
         $hasDistinct = null;
+        $conditions = [];
+        $conditionNumber = 0;
 
         foreach ($request as $key => $value) {
             if ($key == 'outputTable') {
                 $outputTable = $value;
                 ++$i;
+                ++$arrayIndexesIterated;
             }
             if ($key == 'outputFields') {
                 $outputFields = $value;
                 ++$i;
+                ++$arrayIndexesIterated;
             }
             if ($key == 'hasDistinct') {
                 $hasDistinct = $value;
                 ++$i;
+                ++$arrayIndexesIterated;
             }
-            if ($i == 3 && ($hasDistinct == null or $outputFields == null or $outputTable == null)) {
+            if ($i == 3 && ($hasDistinct == null OR $outputFields == null OR $outputTable == null)) {
                 throw new FilterFormatException();
             }
 
@@ -67,30 +77,48 @@ class FilterRepository
             All the previous indexes should have the correct format, must be initiated and we should not have
             repetitive indexes therefor $i == 3;
             */
-            $conditions = [];
-            $conditionNumber = 0;
+
             if ($i == 3)
                 foreach ($value as $itemKey => $item) {
-                    if ($itemKey == 'field'){
+                    if ($itemKey == 'field') {
                         $field = $item;
                     }
-                    if ($itemKey == 'operator'){
+                    if ($itemKey == 'operator') {
                         $operator = $item;
                     }
-                    if ($itemKey == 'value'){
+                    if ($itemKey == 'value') {
                         $value = $item;
                     }
-                    if ($itemKey == 'next'){
+                    if ($itemKey == 'next') {
                         $next = $item;
                     }
                 }
-            if ($field == null, $operator == null, $value == null, $next == null){
+
+            if ($field == null OR $operator == null) {
                 throw new FilterFormatException();
             }
+
+            if (($operator == 'IS NULL' OR $operator == 'IS NOT NULL') && $value != null) {
+                throw new FilterFormatException();
+            }
+
+            //if we still have conditions then next cannot be null!
+            ++$arrayIndexesIterated;
+            if ($arrayIndexesIterated != $length && $next != null)
+                throw new FilterFormatException();
+
+            $conditions[$conditionNumber] = [$field, $operator, $value, $next];
             ++$conditionNumber;
         }
+        //-------------- END OF  GETTING THE DIFFERENT PARTS OF SQL QUERY FROM THE REQUEST -----------------
 
-        DB::select('SELECT ')
+        $query = "SELECT $outputFields FROM $outputTable WHERE";
+        foreach ($conditions as $condition) {
+            $query += " ". $condition[0] . " " . $condition[1] . " " . $condition[2]  . " " . $condition[3];
+        }
+
+        $result = DB::select($query);
+        return $result;
 
     }
 
