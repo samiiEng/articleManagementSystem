@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id('user_id');
             $table->string('first_name', 50);
             $table->string('last_name', 50);
-            $table->unsignedInteger('nationalCode');
-            $table->unsignedInteger('personnelCode')->nullable();
-            $table->string('username', 50);
+            $table->unsignedInteger('nationalCode')->unique();
+            $table->unsignedInteger('personnelCode')->unique()->nullable();
+            $table->string('username', 50)->unique();
             $table->string('password');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();

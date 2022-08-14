@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Filter;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\FilterRequest;
 use App\Models\Department;
 use App\Repositories\Filter\FilterRepository;
 
@@ -10,7 +11,7 @@ class FilterController extends Controller
 {
 
     /******** CONVENTION *********
-     * $filters ==> @array ==> ['view page', ['filter table/model', 'filter value'], ...]
+     * $filters ==> @array ==> ['output model/table', 'output fields' = [*], hasDistinct, [field1, operator, value, next(AND, OR, NULL)], [REPEAT PREVIOUS ARRAY], ....]
      */
 
     /*
@@ -24,8 +25,10 @@ class FilterController extends Controller
         return $departments;
     }
 
-    public function filterOneModelMultiConditions()
+    public function filterOneModelMultiConditions(FilterRepository $filterRepository, FilterRequest $filterRequest)
     {
+        $validated = $filterRequest->validated();
+        $result = $filterRepository->filterOneModelMultiConditions($validated);
 
 
     }
