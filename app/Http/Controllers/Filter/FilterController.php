@@ -33,7 +33,7 @@ class FilterController extends Controller
 //        $validated = $filterRequest->validated();
         $result = $filterRepository->filterOneModelMultiConditions($request);
 //        $result = $filterRepository->filterOneModelMultiConditions($validated);
-        return response()->json(["status" => "succed", "message" => "", "data" =>$result], 200, ['Content-Type' => 'application/json;charset=UTF-8'], JSON_UNESCAPED_UNICODE);
+        return response()->json(["status" => "success", "message" => "", "data" =>$result], 200, ['Content-Type' => 'application/json;charset=UTF-8'], JSON_UNESCAPED_UNICODE);
 
     }
 

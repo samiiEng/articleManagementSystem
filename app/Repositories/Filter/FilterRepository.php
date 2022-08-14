@@ -80,8 +80,8 @@ class FilterRepository
             if ($i == 3) {
                 if ($outputTable == null or $outputFields == null)
                     throw new FilterFormatException("outputTable or outputFields index are either empty or the indexes are misspelled");
-            } else if ($i == 3 && ($outputTable != null and $outputFields != null)) {
-                ++$i;
+            } else if ($i == 3 && ($outputTable != null and $outputFields != null) && $i != $length) {
+
                 /*
                 All the previous indexes should have the correct format, must be initiated and we should not have
                 repetitive indexes therefor $i == 3;
@@ -134,22 +134,27 @@ class FilterRepository
         //========== NOTICE : $i == 3 means there are no conditions!!!!
 
         //-------------- END OF  GETTING THE DIFFERENT PARTS OF SQL QUERY FROM THE REQUEST -----------------
+        
+        $query = "SELECT " . $hasDistinct . " " . $outputFields . " FROM " . $outputTable;
 
-        $query = "SELECT " . $hasDistinct . " " . $outputFields . " FROM " . $outputTable . " WHERE";
-        $valuesNumbers = 0;
-        $values = [];
-        foreach ($conditions as $condition) {
-            $query += " " . $condition[0] . " " . $condition[1] . " ? " . $condition[3];
-            $values[$valuesNumbers] = $condition[2];
-            ++$valuesNumbers;
-        }
-
+        //this makes this method to handle queries without conditions
         $binding = [];
-        foreach ($values as $valueItem) {
-            $valueItem = !empty($valueItem) ? $valueItem : " ";
-            $binding[] = $valueItem;
-        }
+        if (count($conditions)) {
+            $query .= " WHERE";
+            $valuesNumbers = 0;
+            $values = [];
+            foreach ($conditions as $condition) {
+                $query .= " " . $condition[0] . " " . $condition[1] . " ? " . $condition[3];
+                $values[$valuesNumbers] = $condition[2];
+                ++$valuesNumbers;
+            }
 
+
+            foreach ($values as $valueItem) {
+                $valueItem = !empty($valueItem) ? $valueItem : " ";
+                $binding[] = $valueItem;
+            }
+        }
         return DB::select($query, $binding);
 
     }
