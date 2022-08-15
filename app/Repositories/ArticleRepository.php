@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Events\StoreArticleEvent;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -11,7 +12,7 @@ class ArticleRepository
 
     /*
      *CONVENTION ==> {
-     * "author", "title", "contributors", "publishedArticles", "categories",
+     * "author", "title", "contributors", "publishedArticles", "categories", "body",
      *  "tags", "messages" => [
      *      {"contributorID",
      *       "title",
@@ -26,7 +27,7 @@ class ArticleRepository
         //Definded now() out side of the loop for making the time in all of these columns (publish_date, created-at, ...) the same!
         $now = Carbon::now();
         //19 character unique article_code
-        $bindings = [random_int(100000000000000000, 9111111111111111111), $validated['title'], $validated['body'] ?? "", $validated['categories']  ?? "",
+        $bindings = [random_int(100000000000000000, 9111111111111111111), $validated['title'], $validated['body'] ?? "", $validated['categories'] ?? "",
             $validated['tags'] ?? "", $validated['author'], $validated['contributors'], $now, 1, 'pending', $now];
 
 
@@ -38,9 +39,10 @@ class ArticleRepository
             return $e->getMessage();
         }
 
-        //send message to event
-
-
+        //dispatch an event
+        $messages = $validated['messages'];
+        event(new StoreArticleEvent($model, $messages));
+        return "The Article is created successfully!";
     }
 
     public function update($validated)
