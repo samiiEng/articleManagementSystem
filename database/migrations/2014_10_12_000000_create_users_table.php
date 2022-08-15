@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('role', 50)->nullable();
+            $table->unsignedInteger('department_ref_id');
             $table->json('extra')->nullable();
             $table->boolean('is_normal');
             $table->rememberToken();

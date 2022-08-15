@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
 use Illuminate\Validation\Rule;
 
 class FilterRequest extends FormRequest
@@ -14,7 +16,7 @@ class FilterRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,10 +24,28 @@ class FilterRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(Route $route)
     {
-        return [
+        //We have different entries based on the method that's used.
 
-        ];
+        if ($route->getActionMethod() == "filterUsernamesByDepartments")
+            return [
+                "department_id" => "required|integer",
+            ];
+
+        else if ($route->getActionMethod() == "filterCategoriesByDepartments")
+            return [
+                "department_id" => "required|integer",
+            ];
+
+        else if ($route->getActionMethod() == "filterUsernamesByCategoriesDepartments")
+            return [
+                "" => "",
+            ];
+
+        else if ($route->getActionMethod() == "filterArticlesByCategoriesDepartments")
+            return [
+                "" => "",
+            ];
     }
 }

@@ -8,7 +8,7 @@ use App\Models\Department;
 use App\Repositories\Filter\FilterRepository;
 use Illuminate\Http\Request;
 
-;
+
 
 class FilterController extends Controller
 {
@@ -29,14 +29,17 @@ class FilterController extends Controller
     }
 
 
-    public function filterUsernamesByDepartments(FilterRepository $filterRepository, FilterRequest $filterRequest)
+    public function filterUsernamesByDepartments(FilterRequest $filterRequest, FilterRepository $filterRepository)
     {
-
-
+        $validated = $filterRequest->safe()->only('department_id');
+        $results = $filterRepository->filterUsernamesByDepartments($validated);
+        $results = structuredJson($results);
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
 
-    public function filterCategoriesByDepartments($filters)
+    public function filterCategoriesByDepartments(FilterRequest $filterRequest, FilterRepository $filterRepository)
     {
+
 
     }
 

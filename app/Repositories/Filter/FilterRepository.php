@@ -39,8 +39,39 @@ class FilterRepository
     }
 
 
-    public function filterUsernamesByDepartments()
+    public function filterUsernamesByDepartments($filters)
     {
+        /*
+         * CONVENTION ==> $filters ==> {"department_id" : [1,2,3,...]}
+         */
+
+        $departmentIDs = [];
+        foreach ($filters as $key => $value) {
+            //double-checking on the retrieved filters to only check the value we want
+            if ($key == "department_id") {
+                $departmentIDs = explode(",", $value);
+            }
+        }
+
+        //defining the binding
+        $count = count($departmentIDs);
+        $binding = [];
+        foreach ($departmentIDs as $departmentID) {
+            $binding[] = "$departmentID";
+        }
+
+        //defining the conditions
+        $conditions = "";
+
+        for ($i = 1; $i <= $count; $i++) {
+            if ($i != $count)
+                $conditions .= "department_ref_id = ? OR ";
+            else
+                $conditions .= "department_ref_id = ?";
+        }
+
+
+        return DB::select("SELECT * FROM users WHERE $conditions", $binding);
 
     }
 
