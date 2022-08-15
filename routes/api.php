@@ -25,7 +25,7 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
     Route::get('defineArticle', [ArticleController::class, 'create'])->name('defineArticle.create');
     Route::post('filterUsernamesByDepartments', [FilterController::class, 'filterUsernamesByDepartments'])->name('filterUsernamesByDepartments');
     Route::post('filterCategoriesByDepartments', [FilterController::class, 'filterCategoriesByDepartments'])->name('filterCategoriesByDepartments');
-    Route::post('filterArticlesByCategoriesDepartments', [FilterController::class,'filterArticlesCategoriesDepartments'])->name('filterArticlesCategoriesDepartments');
+    Route::post('filterArticlesByCategoriesDepartments', [FilterController::class,'filterArticlesByCategoriesDepartments'])->name('filterArticlesByCategoriesDepartments');
 
     Route::get('hello', function () {
 

@@ -23,11 +23,12 @@ return new class extends Migration
             $table->string('contributor_article_ref_id', 150)->nullable();
             $table->string('waiting_contributor_ref_id', 150)->nullable();
             $table->string('rejected_contributor_ref_id', 150)->nullable();
-            $table->string('published_articles_ref_id', 150)->nullable();
+            $table->string('published_articles_ref_id', 150)->nullable()->comment('The id of published articles that are used in this article');
             $table->string('parent_ref_id')->nullable();
             $table->unsignedBigInteger('revision_ref_id')->nullable();
             $table->unsignedInteger('revision_number')->nullable();
             $table->dateTimeTz('publish_date')->nullable();
+            $table->boolean('is_last_revision');
             $table->string('status', 50);
             $table->timestampsTz();
             $table->softDeletesTz();

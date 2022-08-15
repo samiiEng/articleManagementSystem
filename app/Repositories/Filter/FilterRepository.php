@@ -229,7 +229,17 @@ class FilterRepository
 
     }
 
-
+        /*
+         * CONVENTION ==> $filters ==> {"category_department_id" : [1,2,3,...]}
+         * @return ==> {
+         *  "departmet_ref_id" => [
+         *          {article info},
+         *              .
+         *              .
+         *              .
+         *       ]
+         *  }
+         */
     public function filterUsernamesByCategoriesDepartments($filters)
     {
 
@@ -240,8 +250,7 @@ class FilterRepository
      * CONVENTION ==> $filters ==> {"category_department_id" : [1,2,3,...]}
      * @return ==> {
      *  "departmet_ref_id" => [
-     *          {department info},
-     *          {category info},
+     *          {article info},
      *              .
      *              .
      *              .
@@ -250,7 +259,87 @@ class FilterRepository
      */
     public function filterArticlesByCategoriesDepartments($filters)
     {
+        $filters = $this->bubble_Sort(explode(",", $filters['category_department_id']));
+        $finalArticles = [];
 
+        $articles = DB::select("SELECT article_id, title,  user_ref_id, tag_ref_id, category_department_ref_id FROM articles WHERE is_last_revision = 1 AND publish_date IS NOT NULL");
+        foreach ($articles as $article) {
+            $categoriesDepartmentsIDs = $this->bubble_Sort(explode(',', $article->category_department_ref_id));
+            if ($filters == $categoriesDepartmentsIDs) {
+                $tags = "";
+                $categories = "";
+                $tagsList = explode(",", $article->tag_ref_id);
+                $i = 0;
+                $length = count($tagsList);
+                foreach ($tagsList as $tag) {
+                    ++$i;
+                    $name = DB::select("SELECT name FROM tags WHERE tag_id = $tag")[0]->name ?? null;
+                    if (!empty($name)) {
+                        $j = $i - 1;
+                        if ($j != $length)
+                            $tags .= $name . ", ";
+                        else
+                            $tags .= $name;
+                    } else
+                        continue;
+
+                }
+
+                $categoriesList = explode(',', $article->category_department_ref_id);
+                $i = 0;
+                $length = count($tagsList);
+                foreach ($categoriesList as $category) {
+                    ++$i;
+                    $categoryID = DB::select("SELECT category_ref_id FROM category_department WHERE category_department_id = $category")[0]->category_ref_id ?? null;
+                    if (!empty($categoryID)) {
+                        $name = DB::select("SELECT name FROM categories WHERE category_id = $categoryID")[0]->name ?? null;
+                        if (!empty($name)) {
+                            $j = $i - 1;
+                            if ($j != $length)
+                                $categories .= $name . ", ";
+                            else
+                                $categories .= $name;
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+
+                }
+
+
+                $users = DB::select("SELECT username, first_name, last_name FROM users WHERE user_id = $article->user_ref_id");
+
+                $finalArticles[] = array(
+                    "articleID" => $article->article_id,
+                    "title" => $article->title,
+                    "userID" => $article->user_ref_id,
+                    "username" => $users[0]->username,
+                    "fistName" => $users[0]->first_name,
+                    "lastName" => $users[0]->last_name,
+                    "categories" => $categories,
+                    "tags" => $tags,
+                );
+            }
+        }
+        return $finalArticles;
 
     }
+
+    public function bubble_Sort($array)
+    {
+        do {
+            $swapped = false;
+            for ($i = 0, $c = count($array) - 1; $i < $c; $i++) {
+                if ($array[$i] > $array[$i + 1]) {
+                    list($array[$i + 1], $array[$i]) =
+                        array($array[$i], $array[$i + 1]);
+                    $swapped = true;
+                }
+            }
+        } while ($swapped);
+        return $array;
+    }
+
 }
