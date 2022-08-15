@@ -53,5 +53,6 @@ class FilterController extends Controller
     public function filterArticlesByCategoriesDepartments($filters)
     {
 
+
     }
 }

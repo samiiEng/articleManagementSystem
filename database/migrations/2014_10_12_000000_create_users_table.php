@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->string('avatar_image_path')->nullable();
             $table->string('role', 50)->nullable();
             $table->unsignedInteger('department_ref_id');
             $table->json('extra')->nullable();

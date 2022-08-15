@@ -24,18 +24,18 @@ class FilterRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules(Route $route)
+    public function rules(Route $route, Request $request)
     {
         //We have different entries based on the method that's used.
 
         if ($route->getActionMethod() == "filterUsernamesByDepartments")
             return [
-                "department_id" => "required|integer",
+                "department_id" => "required|string",
             ];
 
         else if ($route->getActionMethod() == "filterCategoriesByDepartments")
             return [
-                "department_id" => "required|integer",
+                "department_id" => "required|string",
             ];
 
         else if ($route->getActionMethod() == "filterUsernamesByCategoriesDepartments")
@@ -45,7 +45,7 @@ class FilterRequest extends FormRequest
 
         else if ($route->getActionMethod() == "filterArticlesByCategoriesDepartments")
             return [
-                "" => "",
+                "category_department_ref_id" => "required|string",
             ];
     }
 }
