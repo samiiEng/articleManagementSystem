@@ -49,19 +49,20 @@ class FilterRepository
         //defining the binding
         $length = count($departmentsIDs);
         $binding = [];
-        foreach ($departmentsIDs as $departmentID) {
-            $binding[] = "$departmentID";
-        }
 
-        //defining the conditions
+        //defining the conditions and bindings
         $conditions = "";
         $i = 0;
         foreach ($departmentsIDs as $departmentsID) {
             ++$i;
             if ($i != $length) {
-                $conditions .= "department_id = ? OR ";
+                $conditions .= "department_ref_id = ? OR ";
+                $j = $i - 1;
+                $binding[] = $departmentsIDs[$j];
             } else {
-                $conditions .= "department_id = ?";
+                $conditions .= "department_ref_id = ?";
+                $j = $i - 1;
+                $binding[] = $departmentsIDs[$j];
             }
         }
 
@@ -84,9 +85,13 @@ class FilterRepository
         foreach ($departmentsIDs as $departmentsID) {
             ++$i;
             if ($i != $length) {
-                $conditions .= "department_id = ? OR ";
+                $conditions .= "department_ref_id = ? OR ";
+                $j = $i - 1;
+                $bindings[] = $departmentsIDs[$j];
             } else {
-                $conditions .= "department_id = ?";
+                $conditions .= "department_ref_id = ?";
+                $j = $i - 1;
+                $bindings[] = $departmentsIDs[$j];
             }
         }
 
@@ -99,8 +104,8 @@ class FilterRepository
                  * 1- getting the department info and category info like english name and name as well
                  * and create an associative array out of them.
                  */
-                if ($departmentsID == $categoriesDepartment["department_ref_id"]) {
-                    $categoryDepartmentID = $categoriesDepartment["category_department_id"];
+                if ($departmentsID == $categoriesDepartment->department_ref_id) {
+                    $categoryDepartmentID = $categoriesDepartment->category_department_id;
 
                     //Getting departments full info
                     $department = DB::select("SELECT * FROM departments WHERE department_id = ?", [$departmentsID]);
