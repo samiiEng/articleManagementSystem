@@ -29,8 +29,8 @@ class ArticleController extends Controller
      */
     public function create(FilterController $filterController, Request $request)
     {
-        $departments = $filterController->retrieveDepartments();
-        return response()->json($departments, 200, array("Content-Type" => "application/json;charset=UTF-8"), JSON_UNESCAPED_UNICODE);
+        $results = structuredJson($filterController->retrieveDepartments());
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
 
     }
 
