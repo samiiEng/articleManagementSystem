@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use phpDocumentor\Reflection\Types\Nullable;
 
 class StoreArticleRequest extends FormRequest
 {
@@ -26,13 +27,14 @@ class StoreArticleRequest extends FormRequest
         return [
             "author" => "required|integer",
             "title" => "required|string|max:100",
+            "body" => "nullable|string",
             "contributors" => "nullable|string",
             "publishedArticles" => "nullable|string",
             "categories" => "required|string",
             "tags" => "nullable|string",
-            "messages.userID" => "nullable|integer",
-            "messages.title" => "nullable|string|max:100",
-            "messages.body" => "nullable|string"
+            "messages.*.contributorID" => "nullable|integer",
+            "messages.*.title" => "nullable|string|max:100",
+            "messages.*.body" => "nullable|string"
         ];
     }
 }

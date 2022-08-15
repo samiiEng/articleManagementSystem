@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id('article_id');
             $table->unsignedBigInteger('article_code')->unique();
             $table->string('title', 100);
-            $table->longText('body');
+            $table->longText('body')->nullable();
             $table->string('category_department_ref_id', 50);
             $table->string('tag_ref_id', 50);
             $table->unsignedBigInteger('user_ref_id');

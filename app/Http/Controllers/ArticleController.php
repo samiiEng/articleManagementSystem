@@ -43,7 +43,7 @@ class ArticleController extends Controller
      */
     public function store(StoreArticleRequest $request, ArticleRepository $articleRepository)
     {
-        $validated = $request->safe()->only(['author', 'title', 'contributors', 'publishedArticles', 'categories', 'tags']);
+        $validated = $request->safe()->only(['author', 'title', 'contributors', 'body', 'publishedArticles', 'categories', 'tags', 'messages']);
         $results = structuredJson($articleRepository->create($validated));
         return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
