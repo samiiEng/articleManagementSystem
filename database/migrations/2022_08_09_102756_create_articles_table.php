@@ -21,9 +21,9 @@ return new class extends Migration
             $table->string('category_department_ref_id', 50);
             $table->string('tag_ref_id', 50);
             $table->unsignedBigInteger('user_ref_id');
-            $table->string('contributor_article_ref_id', 150)->nullable();
-            $table->string('waiting_contributor_ref_id', 150)->nullable();
-            $table->string('rejected_contributor_ref_id', 150)->nullable();
+            $table->string('contributors_ref_id', 150)->nullable();
+            $table->string('waiting_contributors_ref_id', 150)->nullable();
+            $table->string('rejected_contributors_ref_id', 150)->nullable();
             $table->string('published_articles_ref_id', 150)->nullable()->comment('The id of published articles that are used in this article');
             $table->string('parent_ref_id')->nullable();
             $table->unsignedBigInteger('revision_ref_id')->nullable();

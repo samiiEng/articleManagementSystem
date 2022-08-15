@@ -29,7 +29,10 @@ class StoreArticleRequest extends FormRequest
             "contributors" => "nullable|string",
             "publishedArticles" => "nullable|string",
             "categories" => "required|string",
-            "tags" => "nullable|string"
+            "tags" => "nullable|string",
+            "messages.userID" => "nullable|integer",
+            "messages.title" => "nullable|string|max:100",
+            "messages.body" => "nullable|string"
         ];
     }
 }
