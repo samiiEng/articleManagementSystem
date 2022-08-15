@@ -30,11 +30,6 @@ class ArticleController extends Controller
     public function create(FilterController $filterController, Request $request)
     {
         $departments = $filterController->retrieveDepartments();
-        /*return response()->json(['status' => 'success', 'message' => '',
-            'data' => [
-                'This is the define Article page',
-                $departments,
-            ]], 200, array("Content-Type" => "application/json;charset=UTF-8"), JSON_UNESCAPED_UNICODE);*/
         return response()->json($departments, 200, array("Content-Type" => "application/json;charset=UTF-8"), JSON_UNESCAPED_UNICODE);
 
     }

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('articles', function (Blueprint $table) {
             $table->id('article_id');
+            $table->unsignedBigInteger('article_code')->unique();
             $table->string('title', 100);
             $table->longText('body');
             $table->string('category_department_ref_id', 50);

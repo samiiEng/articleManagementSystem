@@ -246,7 +246,7 @@ class FilterRepository
         $filters = $this->bubble_Sort(explode(",", $filters['category_department_id']));
         $finalArticles = [];
 
-        $articles = DB::select("SELECT article_id, title,  user_ref_id, tag_ref_id, category_department_ref_id FROM articles WHERE is_last_revision = 1 AND publish_date IS NOT NULL");
+        $articles = DB::select("SELECT article_id, article_code, title,  user_ref_id, tag_ref_id, category_department_ref_id FROM articles WHERE is_last_revision = 1 AND publish_date IS NOT NULL");
         foreach ($articles as $article) {
             $categoriesDepartmentsIDs = $this->bubble_Sort(explode(',', $article->category_department_ref_id));
             if ($filters == $categoriesDepartmentsIDs) {
@@ -297,6 +297,7 @@ class FilterRepository
 
                 $finalArticles[] = array(
                     "articleID" => $article->article_id,
+                    "articleCode" => $article->article_code,
                     "title" => $article->title,
                     "userID" => $article->user_ref_id,
                     "username" => $users[0]->username,
