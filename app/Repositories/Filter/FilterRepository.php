@@ -110,26 +110,26 @@ class FilterRepository
                     //Getting departments full info
                     $department = DB::select("SELECT * FROM departments WHERE department_id = ?", [$departmentsID]);
 
-                    $departmentID = $department['department_id'];
-                    $departmentName = $department['name'];
-                    $departmentEnglishName = $department['english_name'];
-                    $departmentParentID = $department['department_ref_id'];
+                    $departmentID = $department[0]->department_id;
+                    $departmentName = $department[0]->name;
+                    $departmentEnglishName = $department[0]->english_name;
+                    $departmentParentID = $department[0]->department_ref_id;
                     $departmentParent = DB::select("SELECT * FROM departments WHERE department_id = ?", [$departmentParentID]);
-                    $departmentParentName = $departmentParent['name'];
-                    $departmentParentEnglishName = $departmentParent['english_name'];
+                    $departmentParentName = $departmentParent[0]->name;
+                    $departmentParentEnglishName = $departmentParent[0]->english_name;
 
 
                     //Getting categories full info
 
-                    $category = DB::select("SELECT * FROM categories WHERE category_id = ?", [$categoriesDepartment['category_id']]);
-                    $categoryID = $category['category_id'];
-                    $categoryName = $category['name'];
-                    $categoryEnglishName = $category['english_name'];
-                    $categoryParentID = $category['category_ref_id'];
+                    $category = DB::select("SELECT * FROM categories WHERE category_id = ?", [$categoriesDepartment->category_ref_id]);
+                    $categoryID = $category[0]->category_id;
+                    $categoryName = $category[0]->name;
+                    $categoryEnglishName = $category[0]->english_name;
+                    $categoryParentID = $category[0]->category_ref_id;
 
                     $categoryParent = DB::select("SELECT * FROM categories WHERE category_id = ?", [$categoryParentID]);;
-                    $categoryParentName = $categoryParent['name'];
-                    $categoryParentEnglishName = $categoryParent['english_name'];
+                    $categoryParentName = $categoryParent[0]->name;
+                    $categoryParentEnglishName = $categoryParent[0]->english_name;
 
 
                     $categoriesBasedDepartments["$departmentsID"] = array(

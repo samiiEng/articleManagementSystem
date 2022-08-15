@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id('category_department_id');
             $table->unsignedBigInteger('department_ref_id');
             $table->unsignedBigInteger('category_ref_id');
+            $table->unique(['department_ref_id', 'category_ref_id'], 'category_department_unique');
         });
     }
 
