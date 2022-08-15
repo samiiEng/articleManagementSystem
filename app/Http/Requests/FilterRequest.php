@@ -26,7 +26,7 @@ class FilterRequest extends FormRequest
      */
     public function rules(Route $route, Request $request)
     {
-        //We have different entries based on the method that's used.
+        //Different roles for entries based on the method that's used.
 
         if ($route->getActionMethod() == "filterUsernamesByDepartments")
             return [
@@ -36,11 +36,6 @@ class FilterRequest extends FormRequest
         else if ($route->getActionMethod() == "filterCategoriesByDepartments")
             return [
                 "department_id" => "required|string",
-            ];
-
-        else if ($route->getActionMethod() == "filterUsernamesByCategoriesDepartments")
-            return [
-                "" => "",
             ];
 
         else if ($route->getActionMethod() == "filterArticlesByCategoriesDepartments")
