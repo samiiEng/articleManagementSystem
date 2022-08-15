@@ -7,7 +7,6 @@ class ArticleRepository
     public function create($validated)
     {
 
-
     }
 
     public function update($validated)

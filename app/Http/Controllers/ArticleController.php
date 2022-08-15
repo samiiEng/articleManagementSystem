@@ -7,6 +7,7 @@ use App\Models\Article;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Department;
+use App\Repositories\ArticleRepository;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -40,9 +41,11 @@ class ArticleController extends Controller
      * @param \App\Http\Requests\StoreArticleRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreArticleRequest $request)
+    public function store(StoreArticleRequest $request, ArticleRepository $articleRepository)
     {
-        //
+        $validated = $request->safe()->only(['author', 'title', 'contributors', 'publishedArticles', 'categories', 'tags']);
+        $results = structuredJson($articleRepository->create($validated));
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
 
     /**
