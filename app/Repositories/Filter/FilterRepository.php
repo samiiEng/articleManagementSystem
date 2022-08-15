@@ -29,7 +29,6 @@ class FilterRepository
         $i = 0;
         foreach ($departmentsParents as $departmentsParent) {
             $parentID = $departmentsParent->department_id;
-//            $departmentsChildren = Department::where('department_ref_id', $parentID);
             $departmentsChildren = DB::select('SELECT * FROM departments WHERE department_ref_id = ' . $parentID);
             $i++;
             $departments[$i] = [$departmentsParent, $departmentsChildren];
@@ -78,6 +77,8 @@ class FilterRepository
     public function filterCategoriesByDepartments($filters)
     {
         $departmentsIDs = explode(',', $filters['department_id']);
+
+        //Make conditions and bindings
         $bindings = [];
         $conditions = "";
         $length = count($departmentsIDs);
@@ -114,9 +115,11 @@ class FilterRepository
                     $departmentName = $department[0]->name;
                     $departmentEnglishName = $department[0]->english_name;
                     $departmentParentID = $department[0]->department_ref_id;
-                    $departmentParent = DB::select("SELECT * FROM departments WHERE department_id = ?", [$departmentParentID]);
-                    $departmentParentName = $departmentParent[0]->name;
-                    $departmentParentEnglishName = $departmentParent[0]->english_name;
+                    if (!empty($departmentParent)) {
+                        $departmentParent = DB::select("SELECT * FROM departments WHERE department_id = ?", [$departmentParentID]);
+                        $departmentParentName = $departmentParent[0]->name;
+                        $departmentParentEnglishName = $departmentParent[0]->english_name;
+                    }
 
 
                     //Getting categories full info
@@ -127,9 +130,11 @@ class FilterRepository
                     $categoryEnglishName = $category[0]->english_name;
                     $categoryParentID = $category[0]->category_ref_id;
 
-                    $categoryParent = DB::select("SELECT * FROM categories WHERE category_id = ?", [$categoryParentID]);;
-                    $categoryParentName = $categoryParent[0]->name;
-                    $categoryParentEnglishName = $categoryParent[0]->english_name;
+                    if (!empty($categoryParentID)) {
+                        $categoryParent = DB::select("SELECT * FROM categories WHERE category_id = ?", [$categoryParentID]);;
+                        $categoryParentName = $categoryParent[0]->name;
+                        $categoryParentEnglishName = $categoryParent[0]->english_name;
+                    }
 
 
                     $categoriesBasedDepartments["$departmentsID"] = array(
@@ -137,15 +142,15 @@ class FilterRepository
                         "departmentID" => $departmentID,
                         "departmentName" => $departmentName,
                         "departmentEnglishName" => $departmentEnglishName,
-                        "departmentParentID" => $departmentParentID,
-                        "departmentParentName" => $departmentParentName,
-                        "departmentParentEnglishName" => $departmentParentEnglishName,
+                        "departmentParentID" => $departmentParentID ?? null,
+                        "departmentParentName" => $departmentParentName ?? null,
+                        "departmentParentEnglishName" => $departmentParentEnglishName ?? null,
                         "categoryID" => $categoryID,
                         "categoryName" => $categoryName,
                         "categoryEnglishName" => $categoryEnglishName,
-                        "categoryParentID" => $categoryParentID,
-                        "categoryParentName" => $categoryParentName,
-                        "categoryParentEnglishName" => $categoryParentEnglishName
+                        "categoryParentID" => $categoryParentID ?? null,
+                        "categoryParentName" => $categoryParentName ?? null,
+                        "categoryParentEnglishName" => $categoryParentEnglishName ?? null
                     );
                 }
             }
@@ -157,6 +162,7 @@ class FilterRepository
 
     public function filterUsernamesByCategoriesDepartments($filters)
     {
+
 
     }
 
