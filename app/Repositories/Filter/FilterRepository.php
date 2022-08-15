@@ -229,22 +229,6 @@ class FilterRepository
 
     }
 
-        /*
-         * CONVENTION ==> $filters ==> {"category_department_id" : [1,2,3,...]}
-         * @return ==> {
-         *  "departmet_ref_id" => [
-         *          {article info},
-         *              .
-         *              .
-         *              .
-         *       ]
-         *  }
-         */
-    public function filterUsernamesByCategoriesDepartments($filters)
-    {
-
-
-    }
 
     /*
      * CONVENTION ==> $filters ==> {"category_department_id" : [1,2,3,...]}

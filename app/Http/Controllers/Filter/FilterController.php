@@ -45,11 +45,6 @@ class FilterController extends Controller
 
     }
 
-    public function filterUsernamesByCategoriesDepartments($filters)
-    {
-
-    }
-
     public function filterArticlesByCategoriesDepartments(FilterRequest $filterRequest, FilterRepository $filterRepository)
     {
         $validated = $filterRequest->safe()->only('category_department_id');
