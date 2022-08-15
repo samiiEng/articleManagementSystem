@@ -40,7 +40,15 @@ class FilterRepository
 
     /*
      * CONVENTION ==> $filters ==> {"department_id" : [1,2,3,...]}
-     * @return ==>
+     * @return ==>{
+     *  "departmet_ref_id" => [
+     *          {department info},
+     *          {users info},
+     *              .
+     *              .
+     *              .
+     *       ]
+     *  }
      */
     public function filterUsernamesByDepartments($filters)
     {
@@ -67,12 +75,12 @@ class FilterRepository
         }
 
 
-        $usernames = DB::select("SELECT * FROM users WHERE $conditions", $binding);
+        $users = DB::select("SELECT * FROM users WHERE $conditions", $binding);
 
         foreach ($departmentsIDs as $departmentsID) {
             $flag = true;
-            foreach ($usernames as $usernameValue) {
-                if ($departmentsID == $usernameValue->department_ref_id) {
+            foreach ($users as $user) {
+                if ($departmentsID == $user->department_ref_id) {
                     //Get departments' information just once
                     if ($flag) {
                         $department = DB::select('SELECT * FROM departments WHERE department_id = ?', [$departmentsID]);
@@ -86,7 +94,7 @@ class FilterRepository
                             $departmentParentEnglishName = $departmentParent[0]->english_name;
                         }
 
-                        $usernamesByDepartments[$departmentsID][] = array(
+                        $usersByDepartments[$departmentsID][] = array(
                             "departmentID" => $departmentID,
                             "departmentName" => $departmentName,
                             "departmentEnglishName" => $departmentEnglishName,
@@ -97,11 +105,12 @@ class FilterRepository
                     }
 
                     //Get users' information
-                    $username = $usernameValue->username;
-                    $avatarImagePath = $usernameValue->avatar_image_path;
-                    $firstName = $usernameValue->first_name;
-                    $lastName = $usernameValue->last_name;
-                    $usernamesByDepartments[$departmentsID][] = array(
+                    $username = $user->username;
+                    $avatarImagePath = $user->avatar_image_path;
+                    $firstName = $user->first_name;
+                    $lastName = $user->last_name;
+
+                    $usersByDepartments[$departmentsID][] = array(
                         "username" => $username,
                         "avatarImagePath" => $avatarImagePath,
                         "firstName" => $firstName,
@@ -110,7 +119,7 @@ class FilterRepository
                 }
             }
         }
-        return $usernamesByDepartments;
+        return $usersByDepartments;
 
     }
 
@@ -229,6 +238,15 @@ class FilterRepository
 
     /*
      * CONVENTION ==> $filters ==> {"category_department_id" : [1,2,3,...]}
+     * @return ==> {
+     *  "departmet_ref_id" => [
+     *          {department info},
+     *          {category info},
+     *              .
+     *              .
+     *              .
+     *       ]
+     *  }
      */
     public function filterArticlesByCategoriesDepartments($filters)
     {

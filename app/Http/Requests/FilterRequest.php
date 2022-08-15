@@ -45,7 +45,7 @@ class FilterRequest extends FormRequest
 
         else if ($route->getActionMethod() == "filterArticlesByCategoriesDepartments")
             return [
-                "category_department_ref_id" => "required|string",
+                "category_department_id" => "required|string",
             ];
     }
 }

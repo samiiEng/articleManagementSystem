@@ -50,9 +50,10 @@ class FilterController extends Controller
 
     }
 
-    public function filterArticlesByCategoriesDepartments($filters)
+    public function filterArticlesByCategoriesDepartments(FilterRequest $filterRequest, FilterRepository $filterRepository)
     {
-
-
+        $validated = $filterRequest->safe()->only('category_department_id');
+        $results = structuredJson($filterRepository->filterArticlesByCategoriesDepartments($validated));
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
 }
