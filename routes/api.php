@@ -29,9 +29,9 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
     Route::post('storeArticle', [ArticleController::class, 'store'])->name('storeArticle');
     Route::post('deleteContributor', [ArticleController::class, 'deleteContributor'])->name('deleteContributor');
 
-    Route::get('hello', function (Request $request) {
+    /*Route::get('hello', function (Request $request) {
 
-    });
+    });*/
 });
 
 Route::get('invitationResponse/{articleID}/{userID}/{parameter}', [ArticleController::class, 'invitationResponse'])->name('invitationResponse')->middleware(['signed']);
