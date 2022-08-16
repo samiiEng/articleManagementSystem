@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Routing\Route;
 use phpDocumentor\Reflection\Types\Nullable;
 
 class StoreArticleRequest extends FormRequest

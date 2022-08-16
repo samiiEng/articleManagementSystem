@@ -1,5 +1,5 @@
 <?php
-function structuredJson(array $data = null, string $status = "successful", string $message = "", int $code = 200, string $headers = "")
+function structuredJson(array|string $data = null, string $status = "successful", string $message = "", int $code = 200, string $headers = "")
 {
     return [
         [

@@ -8,7 +8,9 @@ use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Department;
 use App\Repositories\ArticleRepository;
+use App\Repositories\Filter\FilterRepository;
 use \Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ArticleController extends Controller
@@ -92,4 +94,17 @@ class ArticleController extends Controller
     {
         //
     }
+
+    public function invitationResponse(ArticleRepository $articleRepository, $articleID, $userID, $parameter)
+    {
+        $results = structuredJson($articleRepository->invitationResponse($articleID, $userID, $parameter));
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
+
+    }
+
+    public function deleteContributor($isWaiting)
+    {
+
+    }
+
 }

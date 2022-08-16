@@ -31,12 +31,15 @@ class SendContributorInvitationMessage
     {
         $messages = $event->message;
         $from = $event->author;
-        $acceptLink = URL::signedRoute('invitationLink', ['accept']);
-        $rejectLink = URL::signedRoute('invitationLink', ['reject']);
         $now = Carbon::now();
+
         $defaultMessage = DB::select("SELECT * FROM default_messages WHERE type = 'invitation_message'");
         foreach ($messages as $message) {
             $to = $message['contributorID'];
+
+            $acceptLink = URL::signedRoute('invitationResponse', ['articleID' => $event->modelID, 'userID' => $to, 'parameter' => 'accept']);
+            $rejectLink = URL::signedRoute('invitationResponse', ['articleID' => $event->modelID, 'userID' => $to, 'parameter' => 'reject']);
+
             $title = !empty($message['title']) ? $message['title'] : $defaultMessage[0]->title;
             $body = !empty($message['body']) ? $message['body'] : $defaultMessage[0]->body;
             $body .= "Accept : " . $acceptLink . "<br>Reject: " . $rejectLink . "<br>";

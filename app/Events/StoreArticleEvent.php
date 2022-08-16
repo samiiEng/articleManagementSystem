@@ -16,6 +16,7 @@ class StoreArticleEvent
 
     public array $model;
     public array $message;
+    public int $modelID;
 
 
     /**
@@ -23,10 +24,11 @@ class StoreArticleEvent
      *
      * @return void
      */
-    public function __construct($model, $messages)
+    public function __construct($model, $messages, $modelID)
     {
         $this->model = $model;
         $this->message = $messages;
+        $this->modelID = $modelID;
     }
 
     /**

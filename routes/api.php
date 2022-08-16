@@ -30,9 +30,9 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
 
 
     Route::get('hello', function (Request $request) {
-        dd(rand(10, 99));
+
 
     });
 });
 
-Route::get('invitationLink/{parameter}', [ArticleController::class, ''])->name('invitationLink')->middleware(['signed']);
+Route::get('invitationResponse/{articleID}/{userID}/{parameter}', [ArticleController::class, 'invitationResponse'])->name('invitationResponse')->middleware(['signed']);
