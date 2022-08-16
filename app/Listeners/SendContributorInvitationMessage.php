@@ -45,7 +45,7 @@ class SendContributorInvitationMessage
             $body .= "\r\n Accept : " . $acceptLink . "\r\n Reject: " . $rejectLink;
 
             DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, status, created_at)
-                 VALUES($title, $body, $from, $to, recieved, $now)");
+                 VALUES(?,?,?,?,?,?)",[$title, $body, $from, $to, 'waiting', $now]);
         }
 
     }

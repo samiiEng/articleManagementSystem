@@ -79,11 +79,11 @@ class ArticleRepository
     public function invitationResponse($articleID, $userID, $parameter)
     {
         $article = DB::select("SELECT contributors_ref_id, waiting_contributors_ref_id, rejected_contributors_ref_id FROM articles WHERE article_id = ?", [$articleID]);
-        $contributors = explode(',', $article[0]->contributors_ref_id);
-        $waitingContributors = explode(',', $article[0]->waiting_contributors_ref_id);
-        $rejectedContributors = explode(',', $article[0]->rejected_contributors_ref_id);
+        $contributors = !empty($article[0]->contributors_ref_id) ? explode(',', $article[0]->contributors_ref_id) : [];
+        $waitingContributors = !empty($article[0]->waiting_contributors_ref_id) ? explode(',', $article[0]->waiting_contributors_ref_id) : [];
+        $rejectedContributors = !empty($article[0]->rejected_contributors_ref_id) ? explode(',', $article[0]->rejected_contributors_ref_id) : [];
         $hasAlreadyDeletedFromWaitingListByAuthor = false;
-
+       ;
         $i = 0;
         foreach ($waitingContributors as $waitingContributor) {
             if ($waitingContributor == $userID) {
