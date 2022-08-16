@@ -44,12 +44,13 @@ class SendContributorInvitationMessage
             $acceptLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $to, 'parameter' => 'accept']);
             $rejectLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $to, 'parameter' => 'reject']);
 
+            //Returns undefined array key 0 if the default_messages table's correspond record is empty
             $title = !empty($message['title']) ? $message['title'] : $defaultMessage[0]->title;
             $body = !empty($message['body']) ? $message['body'] : $defaultMessage[0]->body;
             $body .= "\r\n Accept : " . $acceptLink . "\r\n Reject: " . $rejectLink;
 
             DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, status, created_at)
-                 VALUES(?,?,?,?,?,?)", [$title, $body, $from, $to, 'waiting', $now]);
+                 VALUES(?,?,?,?,?,?)", [$title, $body, $from, $to, 'received', $now]);
 
             $invitationMessagesIDs[$to] = DB::getPdo()->lastInsertID();
 
@@ -66,10 +67,13 @@ class SendContributorInvitationMessage
             $body = $defaultMessage[0]->body . "\r\n Accept : " . $acceptLink . "\r\n Reject: " . $rejectLink;
 
             DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, status, created_at)
-                 VALUES(?,?,?,?,?,?)", [$title, $body, $from, $value, 'waiting', $now]);
+                 VALUES(?,?,?,?,?,?)", [$title, $body, $from, $value, 'received', $now]);
 
             $invitationMessagesIDs[$value] = DB::getPdo()->lastInsertID();
         }
+
+        $invitationMessagesIDs = json_encode($invitationMessagesIDs);
+        DB::update("UPDATE articles SET invitation_messages_ref_id = ? WHERE article_id = ?", [$invitationMessagesIDs, $article->article_id]);
 
     }
 }
