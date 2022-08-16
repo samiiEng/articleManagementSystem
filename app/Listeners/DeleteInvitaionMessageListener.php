@@ -38,10 +38,7 @@ class DeleteInvitaionMessageListener
                 //Now delete the contributorID/messageID pair from the articles table
                 unset($invitationMessagesIDs[$i]);
                 //-------------------------- AT THIS POINT WE NEED A CUSTOMIZED ORM -------------------------
-                //-------------------------- AT THIS POINT WE NEED A CUSTOMIZED ORM -------------------------
-                //-------------------------- AT THIS POINT WE NEED A CUSTOMIZED ORM -------------------------
-                //-------------------------- AT THIS POINT WE NEED A CUSTOMIZED ORM -------------------------
-                $article = $articleRepository->update(["invitation_messages_ref_id" => $invitationMessagesIDs], ["article_id" => $event->articleID]);
+                $articleRepository->update([["invitation_messages_ref_id" => "?"], ["article_id" => "?"], [json_encode($invitationMessagesIDs), $event->articleID]]);
 
                 break;
             }

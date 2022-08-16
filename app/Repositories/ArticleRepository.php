@@ -53,20 +53,30 @@ class ArticleRepository
     }
 
     /*
-     * CONVENTION ==> [[ "field to set" => "VALUE", ... ],["field for where clause" => "? AND OR AND( OR( AND) OR) )AND( )OR(...", ...]]
+     * CONVENTION ==> [[ "field to set" => "?,", ... ],["field for where clause" => "? AND OR AND( OR( AND) OR) )AND( )OR(...", ...], [value1, value2, ...]]
      */
     public function update($items)
     {
         $set = [];
         $where = [];
-        foreach ($items as $item) {
-            foreach($item as $setItem){
+        $values = [];
 
-            }
+        foreach ($items[0] as $item) {
+            $set[] = $item;
         }
 
-        DB::update("UPDATE articles SET $set WHERE $where", []);
+        foreach ($items[1] as $item) {
+            $where = $item;
+        }
 
+        foreach($items[2] as $item){
+            $values = $item;
+        }
+
+
+        DB::update("UPDATE articles SET $set WHERE $where", [$values]);
+
+        return "The article is updated!";
     }
 
     public function editArticle()
