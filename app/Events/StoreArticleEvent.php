@@ -14,9 +14,9 @@ class StoreArticleEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public array $model;
-    public array $message;
-    public int $modelID;
+    public int $authorID;
+    public int $articleID;
+    public array $messages;
 
 
     /**
@@ -24,11 +24,11 @@ class StoreArticleEvent
      *
      * @return void
      */
-    public function __construct($model, $messages, $modelID)
+    public function __construct($authorID, $articleID, $messages)
     {
-        $this->model = $model;
-        $this->message = $messages;
-        $this->modelID = $modelID;
+        $this->authorID = $authorID;
+        $this->articleID = $articleID;
+        $this->messages = $messages;
     }
 
     /**

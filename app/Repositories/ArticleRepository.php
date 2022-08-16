@@ -31,13 +31,13 @@ class ArticleRepository
         $articleCode = random_int(100000000000000000, 9111111111111111111);
 
         $bindings = [$articleCode, $validated['title'], $validated['body'] ?? "", $validated['categories'] ?? "",
-            $validated['tags'] ?? "", $validated['author'], $validated['contributors'], 1, 'pending', $now];
+            $validated['tags'] ?? "", $validated['author'], $validated['contributors'], $validated['publishedArticles'], 1, 'pending', $now];
 
 
         try {
             $model = DB::insert("INSERT INTO articles (article_code, title, body, category_department_ref_id,
-                      tag_ref_id, user_ref_id, waiting_contributors_ref_id, is_last_revision,
-                      status, created_at) VALUES (?,?,?,?,?,?,?,?,?,?)", $bindings);
+                      tag_ref_id, user_ref_id, waiting_contributors_ref_id, published_articles_ref_id, is_last_revision,
+                      status, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)", $bindings);
         } catch (QueryException $e) {
             return $e->getMessage();
         }
@@ -47,7 +47,7 @@ class ArticleRepository
         $article = DB::select("SELECT article_id FROM articles WHERE article_code = $articleCode");
         $articleID = $article[0]->article_id;
 
-        event(new StoreArticleEvent($model, $messages, $articleID));
+        event(new StoreArticleEvent($validated['author'], $articleID, $messages));
         return "The Article is created successfully and the invitation messages are sent!";
     }
 
