@@ -52,14 +52,31 @@ class ArticleRepository
         return "The Article is created successfully and the invitation messages are sent!";
     }
 
-    public function update($validated)
+    /*
+     * CONVENTION ==> [[ "field to set" => "VALUE", ... ],["field for where clause" => "? AND OR AND( OR( AND) OR) )AND( )OR(...", ...]]
+     */
+    public function update($items)
+    {
+        $set = [];
+        $where = [];
+        foreach ($items as $item) {
+            foreach($item as $setItem){
+
+            }
+        }
+
+        DB::update("UPDATE articles SET $set WHERE $where", []);
+
+    }
+
+    public function editArticle()
     {
 
     }
 
-    public function find()
+    public function find($id)
     {
-
+        return DB::select("SELECT * FROM articles WHERE article_id = ?", [$id]);
     }
 
     public function softDelete()
@@ -118,6 +135,7 @@ class ArticleRepository
 
     public function deleteContributor($request)
     {
+        //We can only delete the rejected and waiting contributors.
         $article = DB::select("SELECT * FROM articles WHERE article_id = ?", [$request['articleID']]);
 
         $waitingContributors = explode(',', $article[0]->waiting_contributors_ref_id);
@@ -125,17 +143,17 @@ class ArticleRepository
 
         foreach ($request['contributors'] as $contributor) {
             if ($contributor['isWaiting']) {
-                $contributor[] = $contributor['contributorID'];
-                $waitingContributors = implode(',', array_diff($waitingContributors, $contributor));
+                $contributorID = array($contributor['contributorID']);
+                $waitingContributors = implode(',', array_diff($waitingContributors, $contributorID));
 
                 DB::update("UPDATE articles SET waiting_contributors_ref_id = ? WHERE article_id = ?", [$waitingContributors, $request['articleID']]);
 
                 //Event for deleting the invitation link that has been sent
-                event(new DeleteWaitingContributorEvent($contributor['contributorID'], json_decode($article[0]->invitation_messages_ref_id, true)));
+                event(new DeleteWaitingContributorEvent($article[0]->article_id, $contributor['contributorID'], json_decode($article[0]->invitation_messages_ref_id, true)));
 
             } else {
-                $contributor[] = $contributor['contributorID'];
-                $rejectedContributors = implode(',', array_diff($rejectedContributors, $contributor));
+                $contributorID = array($contributor['contributorID']);
+                $rejectedContributors = implode(',', array_diff($rejectedContributors, $contributorID));
 
                 DB::update("UPDATE articles SET rejected_contributors_ref_id = ? WHERE article_id = ?", [$rejectedContributors, $request['articleID']]);
 

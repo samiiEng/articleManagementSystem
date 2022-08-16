@@ -2,6 +2,8 @@
 
 namespace App\Listeners;
 
+use App\Repositories\ArticleRepository;
+use App\Repositories\MessageRepository;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\DB;
@@ -24,12 +26,24 @@ class DeleteInvitaionMessageListener
      * @param object $event
      * @return void
      */
-    public function handle($event)
+    public function handle($event, MessageRepository $messageRepository, ArticleRepository $articleRepository)
     {
-        foreach ($event->invitationMessagesIDs as $key => $value) {
-            if ($key == $event->to){
-                DB::delete("DELETE FROM messages WHERE message_id = ?", [$value]);
-                return "The invitation message sent to the contributor is successfully deleted!";
+        $i = 0;
+        $invitationMessagesIDs = $event->invitationMessagesIDs;
+        foreach ($invitationMessagesIDs as $key => $value) {
+            $i++;
+            if ($key == $event->to) {
+                $messageRepository->forceDelete($value);
+
+                //Now delete the contributorID/messageID pair from the articles table
+                unset($invitationMessagesIDs[$i]);
+                //-------------------------- AT THIS POINT WE NEED A CUSTOMIZED ORM -------------------------
+                //-------------------------- AT THIS POINT WE NEED A CUSTOMIZED ORM -------------------------
+                //-------------------------- AT THIS POINT WE NEED A CUSTOMIZED ORM -------------------------
+                //-------------------------- AT THIS POINT WE NEED A CUSTOMIZED ORM -------------------------
+                $article = $articleRepository->update(["invitation_messages_ref_id" => $invitationMessagesIDs], ["article_id" => $event->articleID]);
+
+                break;
             }
         }
 

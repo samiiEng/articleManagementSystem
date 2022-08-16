@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use Illuminate\Support\Facades\DB;
+
 class MessageRepository
 {
     public function create($validated)
@@ -25,8 +27,9 @@ class MessageRepository
 
     }
 
-    public function forceDelete()
+    public function forceDelete($value)
     {
+        DB::delete("DELETE FROM messages WHERE message_id = ?", [$value]);
 
     }
 
