@@ -102,8 +102,11 @@ class ArticleController extends Controller
 
     }
 
-    public function deleteContributor($isWaiting)
+    public function deleteContributor(UpdateArticleRequest $request, ArticleRepository $articleRepository)
     {
+        $validated = $request->safe()->only('articleID', 'contributors');
+        $results = structuredJson($articleRepository->deleteContributor($validated));
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
 
     }
 

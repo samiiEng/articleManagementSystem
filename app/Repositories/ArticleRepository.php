@@ -82,8 +82,7 @@ class ArticleRepository
         $contributors = !empty($article[0]->contributors_ref_id) ? explode(',', $article[0]->contributors_ref_id) : [];
         $waitingContributors = !empty($article[0]->waiting_contributors_ref_id) ? explode(',', $article[0]->waiting_contributors_ref_id) : [];
         $rejectedContributors = !empty($article[0]->rejected_contributors_ref_id) ? explode(',', $article[0]->rejected_contributors_ref_id) : [];
-        $hasAlreadyDeletedFromWaitingListByAuthor = false;
-       ;
+        $hasAlreadyDeletedFromWaitingListByAuthor = false;;
         $i = 0;
         foreach ($waitingContributors as $waitingContributor) {
             if ($waitingContributor == $userID) {
@@ -113,6 +112,28 @@ class ArticleRepository
 
         }
         return "The clicked invitation link is successfully processed!";
+
+    }
+
+    public function deleteContributor($request)
+    {
+        $article = DB::select("SELECT * FROM articles WHERE article_id = ?", [$request['articleID']]);
+        $waitingContributors = explode(',', $article['waiting_contributors_ref_id']);
+        $rejectedContributors = explode(',', $article['rejected_contributors_ref_id']);
+
+        foreach ($request->contributors as $contributor) {
+            if ($contributor['isWaiting']) {
+                $waitingContributors = implode(',', array_diff($waitingContributors, $contributor['contributorID']));
+                DB::update("UPDATE articles SET waiting_contributors_ref_id = ? WHERE article_id = ?", [$waitingContributors, $request['articleID']]);
+                //Event for deleting the invitation link that has been sent
+
+            } else {
+                $rejectedContributors = implode(',', array_diff($rejectedContributors, $contributor['contributorID']));
+                DB::update("UPDATE articles SET rejected_contributors_ref_id = ? WHERE article_id = ?", [$rejectedContributors, $request['articleID']]);
+                //The invitation is seen and responded by the user so deleting the invitation is pointless.
+            }
+
+        }
 
     }
 

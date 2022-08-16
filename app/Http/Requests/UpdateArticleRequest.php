@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Routing\Route;
 
 class UpdateArticleRequest extends FormRequest
 {
@@ -13,7 +14,7 @@ class UpdateArticleRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,10 +22,19 @@ class UpdateArticleRequest extends FormRequest
      *
      * @return array<string, mixed>
      */
-    public function rules()
+    public function rules(Route $route)
     {
-        return [
-            //
-        ];
+        $method = $route->getActionMethod();
+            if ($method == "deleteContributor") {
+                return [
+                    "articleID" => "required|integer",
+                    "contributors.*.contributorID" => "required|integer",
+                    "contributors.*.isWaiting" => "required|boolean"
+                ];
+            } else if ($method == "update") {
+                return [
+
+                ];
+            }
     }
 }
