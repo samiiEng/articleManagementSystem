@@ -23,21 +23,33 @@ use \App\Http\Controllers\Filter\FilterController;
 
 Route::prefix('dashboard/')->name('dashboard.')->group(function () {
 
-    //define article
+    //*******************define article
     Route::get('defineArticle', [ArticleController::class, 'create'])->name('defineArticle.create');
     Route::post('storeArticle', [ArticleController::class, 'store'])->name('storeArticle');
 
-    //filtering
+    //*******************filtering
     Route::post('filterUsernamesByDepartments', [FilterController::class, 'filterUsernamesByDepartments'])->name('filterUsernamesByDepartments');
     Route::post('filterCategoriesByDepartments', [FilterController::class, 'filterCategoriesByDepartments'])->name('filterCategoriesByDepartments');
     Route::post('filterArticlesByCategoriesDepartments', [FilterController::class, 'filterArticlesByCategoriesDepartments'])->name('filterArticlesByCategoriesDepartments');
 
-    //edit article
+    //*******************list articles
+    /* 1- Does filter by if it is or is not published
+     * 2- For sending less data to the front-end we let the user check the isPublished filter checkbox and
+     * get the data from the server By Ajax or ....
+     */
+    Route::get('listArticles/{isPublished}', [ArticleController::class, 'index'])->name('listArticles')->where(['isPublished' => '[01]']);
+    Route::get('showArticle/{articleID}', [ArticleController::class, 'show'])->name('showArticle');
+//    Route::get('editArticle/{articleID}', [ArticleController::class, 'edit'])->name('editArticle');
+//    Route::get('deleteArticle/{articleID}', [ArticleController::class, 'softDelete'])->name('deleteArticle');
+
+
+    //*******************edit article
+
     Route::post('deleteContributor', [ArticleController::class, 'deleteContributor'])->name('deleteContributor');
+
 
     //login/register
     Route::get('editArticle', [ArticleController::class, 'edit'])->name('editArticle');
-
 
 
     Route::get('hello', function (Request $request) {

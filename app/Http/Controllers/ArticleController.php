@@ -12,6 +12,7 @@ use App\Repositories\Filter\FilterRepository;
 use \Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use PHPUnit\Util\Filter;
 
 class ArticleController extends Controller
 {
@@ -20,9 +21,12 @@ class ArticleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, ArticleRepository $articleRepository, $isPublished = 0)
     {
-        //
+        $user = $request->user();
+        $results = structuredJson($articleRepository->index($user, $isPublished));
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
+
     }
 
     /**
@@ -58,7 +62,13 @@ class ArticleController extends Controller
      */
     public function show(Article $article)
     {
-        //
+        /*
+         * Only the main part of the article which is title and body sections are applicable for the
+         * users who want to read the article and the title and body of the children articles of that
+         * article is not shown to them.
+         */
+        $results = structuredJson($article);
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
 
     /**

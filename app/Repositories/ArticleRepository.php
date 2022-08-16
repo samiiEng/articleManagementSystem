@@ -13,6 +13,43 @@ class ArticleRepository
 {
 
     /*
+     * Gives the last revision of the articles and if set only the published ones
+     */
+    public function index($user, $isPublished)
+    {
+        $isPublished = $isPublished ? " AND publish_date IS NOT NULL" : "";
+
+        if ($user->role == 'normal') {
+            //Gets his/her articles
+
+            return DB::select("SELECT * FROM articles WHERE user_ref_id = ? AND is_last_revision = 1 $isPublished", [$user->id]);
+        } elseif ($user->role == 'department_manager') {
+            //Only gets the articles belong to the authors of this department
+
+            $users = DB::select("SELECT user_id FROM users WHERE department_ref_id = ? AND is_last_revision = 1 $isPublished", [$user->department_ref_id]);
+            $length = count($users);
+            $i = 0;
+            $conditions = "";
+            $values = [];
+            foreach ($users as $value) {
+                $i++;
+                if ($length == $i)
+                    $conditions .= "user_ref_id = ? OR ";
+                else
+                    $conditions .= "user_ref_id = ?";
+                $values[] = $value->id;
+            }
+            $conditions .= $isPublished;
+
+            return DB::select("SELECT * FROM articles WHERE is_last_revision = 1 AND ($conditions))", $values);
+        } else {
+            //Gets all articles
+            //The user is admin or the university manager
+            return DB::select("SELECT * FROM articles");
+        }
+    }
+
+    /*
      *CONVENTION ==> {
      * "author", "title", "contributors", "publishedArticles", "categories", "body",
      *  "tags", "messages" => [
