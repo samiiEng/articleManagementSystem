@@ -14,8 +14,6 @@ class DeleteWaitingContributorEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public int $articleID;
-    public int $from;
     public int $to;
     public array $invitationMessagesIDs;
 
@@ -24,10 +22,8 @@ class DeleteWaitingContributorEvent
      *
      * @return void
      */
-    public function __construct($articleID, $from, $to, $invitationMessagesIDs)
+    public function __construct($to, $invitationMessagesIDs)
     {
-        $this->articleID = $articleID;
-        $this->from = $from;
         $this->to = $to;
         $this->invitationMessagesIDs = $invitationMessagesIDs;
 

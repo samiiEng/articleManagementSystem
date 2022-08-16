@@ -119,10 +119,11 @@ class ArticleRepository
     public function deleteContributor($request)
     {
         $article = DB::select("SELECT * FROM articles WHERE article_id = ?", [$request['articleID']]);
-        $waitingContributors = explode(',', $article['waiting_contributors_ref_id']);
-        $rejectedContributors = explode(',', $article['rejected_contributors_ref_id']);
 
-        foreach ($request->contributors as $contributor) {
+        $waitingContributors = explode(',', $article[0]->waiting_contributors_ref_id);
+        $rejectedContributors = explode(',', $article[0]->rejected_contributors_ref_id);
+
+        foreach ($request['contributors'] as $contributor) {
             if ($contributor['isWaiting']) {
                 $contributor[] = $contributor['contributorID'];
                 $waitingContributors = implode(',', array_diff($waitingContributors, $contributor));
@@ -130,7 +131,7 @@ class ArticleRepository
                 DB::update("UPDATE articles SET waiting_contributors_ref_id = ? WHERE article_id = ?", [$waitingContributors, $request['articleID']]);
 
                 //Event for deleting the invitation link that has been sent
-                event(new DeleteWaitingContributorEvent($request['articleID'], $article['user_id'], $contributor['contributorID'], json_decode($article['invitation_messages_ref_id'])));
+                event(new DeleteWaitingContributorEvent($contributor['contributorID'], json_decode($article[0]->invitation_messages_ref_id, true)));
 
             } else {
                 $contributor[] = $contributor['contributorID'];
