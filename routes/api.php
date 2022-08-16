@@ -27,7 +27,7 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
     Route::post('filterCategoriesByDepartments', [FilterController::class, 'filterCategoriesByDepartments'])->name('filterCategoriesByDepartments');
     Route::post('filterArticlesByCategoriesDepartments', [FilterController::class, 'filterArticlesByCategoriesDepartments'])->name('filterArticlesByCategoriesDepartments');
     Route::post('storeArticle', [ArticleController::class, 'store'])->name('storeArticle');
-
+    Route::post('deleteContributor', [ArticleController::class, 'deleteContributor'])->name('deleteContributor');
 
     Route::get('hello', function (Request $request) {
 
