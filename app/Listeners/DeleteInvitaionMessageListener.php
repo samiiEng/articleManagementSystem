@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Events\DeleteWaitingContributorEvent;
 use App\Repositories\ArticleRepository;
 use App\Repositories\MessageRepository;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,7 +27,7 @@ class DeleteInvitaionMessageListener
      * @param object $event
      * @return void
      */
-    public function handle($event, MessageRepository $messageRepository, ArticleRepository $articleRepository)
+    public function handle(MessageRepository $messageRepository, ArticleRepository $articleRepository, DeleteWaitingContributorEvent $event)
     {
         $i = 0;
         $invitationMessagesIDs = $event->invitationMessagesIDs;
