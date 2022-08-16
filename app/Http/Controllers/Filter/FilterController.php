@@ -22,6 +22,7 @@ class FilterController extends Controller
     public
     function retrieveDepartments()
     {
+        //I suppose that if I type hint this then it makes me to enter a parameter for this argument.
         $filterRepository = new FilterRepository();
         $departments = $filterRepository->retrieveDepartments();
         return $departments;

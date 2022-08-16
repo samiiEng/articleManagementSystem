@@ -35,6 +35,11 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
     //edit article
     Route::post('deleteContributor', [ArticleController::class, 'deleteContributor'])->name('deleteContributor');
 
+    //login/register
+    Route::get('editArticle', [ArticleController::class, 'edit'])->name('editArticle');
+
+
+
     Route::get('hello', function (Request $request) {
 
     });
