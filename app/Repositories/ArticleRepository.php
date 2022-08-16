@@ -44,10 +44,10 @@ class ArticleRepository
 
         //dispatch an event
         $messages = $validated['messages'];
-        $article = DB::select("SELECT article_id FROM articles WHERE article_code = $articleCode");
-        $articleID = $article[0]->article_id;
+        $article = DB::select("SELECT * FROM articles WHERE article_code = $articleCode");
 
-        event(new StoreArticleEvent($validated['author'], $articleID, $messages));
+
+        event(new StoreArticleEvent($article, $messages));
         return "The Article is created successfully and the invitation messages are sent!";
     }
 

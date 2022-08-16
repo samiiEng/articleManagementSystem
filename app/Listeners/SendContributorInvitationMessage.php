@@ -30,22 +30,38 @@ class SendContributorInvitationMessage
     public function handle(StoreArticleEvent $event)
     {
         $messages = $event->messages;
-        $from = $event->authorID;
+        $from = $event->article[0]->user_ref_id;
         $now = Carbon::now();
 
         $defaultMessage = DB::select("SELECT * FROM default_messages WHERE type = 'invitation_message'");
+
         foreach ($messages as $message) {
             $to = $message['contributorID'];
+            $contributors[] = $to;
 
-            $acceptLink = URL::signedRoute('invitationResponse', ['articleID' => $event->articleID, 'userID' => $to, 'parameter' => 'accept']);
-            $rejectLink = URL::signedRoute('invitationResponse', ['articleID' => $event->articleID, 'userID' => $to, 'parameter' => 'reject']);
+            $acceptLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $to, 'parameter' => 'accept']);
+            $rejectLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $to, 'parameter' => 'reject']);
 
             $title = !empty($message['title']) ? $message['title'] : $defaultMessage[0]->title;
             $body = !empty($message['body']) ? $message['body'] : $defaultMessage[0]->body;
             $body .= "\r\n Accept : " . $acceptLink . "\r\n Reject: " . $rejectLink;
 
             DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, status, created_at)
-                 VALUES(?,?,?,?,?,?)",[$title, $body, $from, $to, 'waiting', $now]);
+                 VALUES(?,?,?,?,?,?)", [$title, $body, $from, $to, 'waiting', $now]);
+        }
+
+        //Send message to the contributors that didn't have any custom message in the input request
+        $to = explode(',', $event->article[0]->waiting_contributors_ref_id);
+        $to = array_diff($to, $contributors);
+        foreach ($to as $value) {
+            $acceptLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $value, 'parameter' => 'accept']);
+            $rejectLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $value, 'parameter' => 'reject']);
+
+            $title = $defaultMessage[0]->title;
+            $body = $defaultMessage[0]->body . "\r\n Accept : " . $acceptLink . "\r\n Reject: " . $rejectLink;
+
+            DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, status, created_at)
+                 VALUES(?,?,?,?,?,?)", [$title, $body, $from, $value, 'waiting', $now]);
         }
 
     }
