@@ -39,8 +39,8 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
      */
     Route::get('listArticles/{isPublished}', [ArticleController::class, 'index'])->name('listArticles')->where(['isPublished' => '[01]']);
     Route::get('showArticle/{articleID}', [ArticleController::class, 'show'])->name('showArticle');
-//    Route::get('editArticle/{articleID}', [ArticleController::class, 'edit'])->name('editArticle');
-//    Route::get('deleteArticle/{articleID}', [ArticleController::class, 'softDelete'])->name('deleteArticle');
+    Route::get('editArticle/{articleID}', [ArticleController::class, 'edit'])->name('editArticle');
+    Route::get('deleteArticle/{articleID}', [ArticleController::class, 'softDelete'])->name('deleteArticle');
 
 
     //*******************edit article

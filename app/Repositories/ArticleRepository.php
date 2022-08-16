@@ -117,7 +117,26 @@ class ArticleRepository
         return "The article is updated!";
     }
 
-    public function editArticle()
+    public function editArticle($article)
+    {
+        $contributors = explode(',', $article->waiting_contributors_ref_id);
+        $result[] = $article;
+
+        foreach ($contributors as $contributor) {
+            $acceptedContributors = json_decode(DB::select("SELECT contributors_ref_id FROM articles WHERE article_id = ?", [$article->article_id])[0], true);
+            foreach ($acceptedContributors as $key => $value) {
+                $user = DB::select("SELECT username, first_name, last_name FROM users WHERE user_id = ?", [$key])[0];
+
+                $result['contributorsArticles'][] = DB::select("SELECT title, body, article_code, article_id FROM articles WHERE article_id = ?", [$value])[0]
+                    . $user . DB::select("SELECT name, english_name FROM departments WHERE department_id = ?", [$user->department_ref_id])[0];
+            }
+
+        }
+        return $result;
+
+    }
+
+    public function updateArticle()
     {
 
     }

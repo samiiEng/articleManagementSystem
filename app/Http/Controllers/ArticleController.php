@@ -77,9 +77,10 @@ class ArticleController extends Controller
      * @param \App\Models\Article $article
      * @return \Illuminate\Http\Response
      */
-    public function edit(Article $article)
+    public function edit(Article $article, ArticleRepository $articleRepository)
     {
-        //
+        $results = structuredJson($articleRepository->editArticle($article));
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
 
     /**

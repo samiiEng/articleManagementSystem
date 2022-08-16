@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('category_department_ref_id', 50);
             $table->string('tag_ref_id', 50);
             $table->unsignedBigInteger('user_ref_id');
-            $table->string('contributors_ref_id', 150)->nullable();
+            $table->json('contributors_ref_id')->nullable()->comment("pairs of contributorID/articleID");
             $table->string('waiting_contributors_ref_id', 150)->nullable();
             $table->string('rejected_contributors_ref_id', 150)->nullable();
             $table->json('invitation_messages_ref_id')->nullable()->comment("It's constructed of pairs of contributorID/messageID.");
