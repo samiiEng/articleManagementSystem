@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('default_messages', function (Blueprint $table) {
-            $table->smallIncrements('default_message_id')->primary();
+            $table->smallIncrements('default_message_id');
             $table->string('type')->unique()->comment('A word or two that describes the intention of the message for the user.');
             $table->string('title', 50)->unique();
             $table->longText('body');
