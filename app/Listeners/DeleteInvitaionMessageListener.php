@@ -11,14 +11,19 @@ use Illuminate\Support\Facades\DB;
 
 class DeleteInvitaionMessageListener
 {
+
+    public $messageRepository;
+    public $articleRepository;
+
     /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(MessageRepository $messageRepository, ArticleRepository $articleRepository)
     {
-        //
+        $this->articleRepository = $articleRepository;
+        $this->messageRepository = $messageRepository;
     }
 
     /**
@@ -27,19 +32,19 @@ class DeleteInvitaionMessageListener
      * @param object $event
      * @return void
      */
-    public function handle(MessageRepository $messageRepository, ArticleRepository $articleRepository, DeleteWaitingContributorEvent $event)
+    public function handle(DeleteWaitingContributorEvent $event)
     {
         $i = 0;
         $invitationMessagesIDs = $event->invitationMessagesIDs;
         foreach ($invitationMessagesIDs as $key => $value) {
             $i++;
             if ($key == $event->to) {
-                $messageRepository->forceDelete($value);
+                $this->messageRepository->forceDelete($value);
 
                 //Now delete the contributorID/messageID pair from the articles table
                 unset($invitationMessagesIDs[$i]);
                 //-------------------------- AT THIS POINT WE NEED A CUSTOMIZED ORM -------------------------
-                $articleRepository->update([["invitation_messages_ref_id" => "?"], ["article_id" => "?"], [json_encode($invitationMessagesIDs), $event->articleID]]);
+                $this->articleRepository->update([["invitation_messages_ref_id" => "= ?"], ["article_id" => "= ?"], [json_encode($invitationMessagesIDs), $event->articleID]]);
 
                 break;
             }

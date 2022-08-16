@@ -57,24 +57,25 @@ class ArticleRepository
      */
     public function update($items)
     {
-        $set = [];
-        $where = [];
+        $set = "";
+        $where = "";
         $values = [];
 
-        foreach ($items[0] as $item) {
-            $set[] = $item;
+        foreach ($items[0] as $key => $value) {
+
+            $set .= $key . " " . $value;
         }
 
-        foreach ($items[1] as $item) {
-            $where = $item;
+        foreach ($items[1] as $key => $value) {
+            $where .= $key . " " . $value;
         }
 
-        foreach($items[2] as $item){
-            $values = $item;
+        foreach ($items[2] as $item) {
+            $values[] = $item;
         }
 
 
-        DB::update("UPDATE articles SET $set WHERE $where", [$values]);
+        DB::update("UPDATE articles SET $set WHERE $where", $values);
 
         return "The article is updated!";
     }
@@ -172,6 +173,7 @@ class ArticleRepository
 
         }
 
+        return "The operation was successful!";
     }
 
 }
