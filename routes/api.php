@@ -40,10 +40,11 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
     Route::get('listArticles/{isPublished}', [ArticleController::class, 'index'])->name('listArticles')->where(['isPublished' => '[01]']);
     Route::get('showArticle/{articleID}', [ArticleController::class, 'show'])->name('showArticle');
     Route::get('editArticle/{articleID}', [ArticleController::class, 'edit'])->name('editArticle');
-    Route::get('deleteArticle/{articleID}', [ArticleController::class, 'softDelete'])->name('deleteArticle');
+    Route::post("updateArticle/{articleID}", [ArticleController::class, 'update'])->name('updateArticle');
+//    Route::get('deleteArticle/{articleID}', [ArticleController::class, 'softDelete'])->name('deleteArticle');
 
 
-    //*******************edit article
+    //*******************delete contributor
 
     Route::post('deleteContributor', [ArticleController::class, 'deleteContributor'])->name('deleteContributor');
 
