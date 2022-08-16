@@ -7,6 +7,7 @@ use App\Models\Article;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use App\Events\DeleteWaitingContributorEvent;
 
 class ArticleRepository
 {
@@ -123,13 +124,20 @@ class ArticleRepository
 
         foreach ($request->contributors as $contributor) {
             if ($contributor['isWaiting']) {
-                $waitingContributors = implode(',', array_diff($waitingContributors, $contributor['contributorID']));
+                $contributor[] = $contributor['contributorID'];
+                $waitingContributors = implode(',', array_diff($waitingContributors, $contributor));
+
                 DB::update("UPDATE articles SET waiting_contributors_ref_id = ? WHERE article_id = ?", [$waitingContributors, $request['articleID']]);
+
                 //Event for deleting the invitation link that has been sent
+                event(new DeleteWaitingContributorEvent($request['articleID'], $article['user_id'], $contributor['contributorID']));
 
             } else {
-                $rejectedContributors = implode(',', array_diff($rejectedContributors, $contributor['contributorID']));
+                $contributor[] = $contributor['contributorID'];
+                $rejectedContributors = implode(',', array_diff($rejectedContributors, $contributor));
+
                 DB::update("UPDATE articles SET rejected_contributors_ref_id = ? WHERE article_id = ?", [$rejectedContributors, $request['articleID']]);
+
                 //The invitation is seen and responded by the user so deleting the invitation is pointless.
             }
 

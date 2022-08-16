@@ -2,7 +2,9 @@
 
 namespace App\Subscribers;
 
+use App\Events\DeleteWaitingContributorEvent;
 use App\Events\StoreArticleEvent;
+use App\Listeners\DeleteInvitaionMessageListener;
 use App\Listeners\SendContributorInvitationMessage;
 
 class ArticleSubscriber
@@ -17,5 +19,11 @@ class ArticleSubscriber
             StoreArticleEvent::class,
             [SendContributorInvitationMessage::class, 'handle']
         );
+
+        $events->listen(
+            DeleteWaitingContributorEvent::class,
+            [DeleteInvitaionMessageListener::class, 'handle']
+        );
+
     }
 }
