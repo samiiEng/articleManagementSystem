@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('contributors_ref_id', 150)->nullable();
             $table->string('waiting_contributors_ref_id', 150)->nullable();
             $table->string('rejected_contributors_ref_id', 150)->nullable();
+            $table->json('invitation_messages_ref_id')->nullable()->comment("It's constructed of pairs of contributorID/messageID.");
             $table->string('published_articles_ref_id', 150)->nullable()->comment('The id of published articles that are used in this article');
             $table->string('parent_ref_id')->nullable();
             $table->unsignedBigInteger('revision_ref_id')->nullable();

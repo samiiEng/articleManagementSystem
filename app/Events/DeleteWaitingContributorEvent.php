@@ -17,17 +17,19 @@ class DeleteWaitingContributorEvent
     public int $articleID;
     public int $from;
     public int $to;
+    public array $invitationMessagesIDs;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($articleID, $from, $to)
+    public function __construct($articleID, $from, $to, $invitationMessagesIDs)
     {
         $this->articleID = $articleID;
         $this->from = $from;
         $this->to = $to;
+        $this->invitationMessagesIDs = $invitationMessagesIDs;
 
     }
 

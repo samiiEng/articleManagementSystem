@@ -30,8 +30,10 @@ class SendContributorInvitationMessage
     public function handle(StoreArticleEvent $event)
     {
         $messages = $event->messages;
+        $article = $event->article[0];
         $from = $event->article[0]->user_ref_id;
         $now = Carbon::now();
+        $invitationMessagesIDs = [];
 
         $defaultMessage = DB::select("SELECT * FROM default_messages WHERE type = 'invitation_message'");
 
@@ -48,6 +50,9 @@ class SendContributorInvitationMessage
 
             DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, status, created_at)
                  VALUES(?,?,?,?,?,?)", [$title, $body, $from, $to, 'waiting', $now]);
+
+            $invitationMessagesIDs[$to] = DB::getPdo()->lastInsertID();
+
         }
 
         //Send message to the contributors that didn't have any custom message in the input request
@@ -62,6 +67,8 @@ class SendContributorInvitationMessage
 
             DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, status, created_at)
                  VALUES(?,?,?,?,?,?)", [$title, $body, $from, $value, 'waiting', $now]);
+
+            $invitationMessagesIDs[$value] = DB::getPdo()->lastInsertID();
         }
 
     }

@@ -130,7 +130,7 @@ class ArticleRepository
                 DB::update("UPDATE articles SET waiting_contributors_ref_id = ? WHERE article_id = ?", [$waitingContributors, $request['articleID']]);
 
                 //Event for deleting the invitation link that has been sent
-                event(new DeleteWaitingContributorEvent($request['articleID'], $article['user_id'], $contributor['contributorID']));
+                event(new DeleteWaitingContributorEvent($request['articleID'], $article['user_id'], $contributor['contributorID'], json_decode($article['invitation_messages_ref_id'])));
 
             } else {
                 $contributor[] = $contributor['contributorID'];
