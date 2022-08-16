@@ -39,7 +39,16 @@ class SendContributorInvitationMessage
 
         foreach ($messages as $message) {
             $to = $message['contributorID'];
-            $contributors[] = $to;
+
+            /*
+             * Only the new contributors(in ArticleController@update) should be sent if we have any
+             * new contributors!
+             */
+            if (!empty($event->newContributors))
+                if (!array_search($to, $event->newContributors))
+                    continue;
+
+            $sentContributors[] = $to;
 
             $acceptLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $to, 'parameter' => 'accept']);
             $rejectLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $to, 'parameter' => 'reject']);
@@ -56,9 +65,13 @@ class SendContributorInvitationMessage
 
         }
 
-        //Send message to the contributors that didn't have any custom message in the input request
-        $to = explode(',', $event->article[0]->waiting_contributors_ref_id);
-        $to = array_diff($to, $contributors);
+        //1- Send message to the contributors that didn't have any custom message in the input request
+        /*
+         * Only the new contributors(in ArticleController@update) should be sent if we have any
+         * new contributors!
+         */
+        $to = !empty($event->newContributors) ? $event->newContributors : explode(',', $event->article[0]->waiting_contributors_ref_id);
+        $to = array_diff($to, $sentContributors);
         foreach ($to as $value) {
             $acceptLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $value, 'parameter' => 'accept']);
             $rejectLink = URL::signedRoute('invitationResponse', ['articleID' => $event->article[0]->article_id, 'userID' => $value, 'parameter' => 'reject']);

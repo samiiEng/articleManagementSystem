@@ -179,7 +179,7 @@ class ArticleRepository
 
         $contributors['waiting'] = $article->waiting_contributors_ref_id;
         $contributors['rejected'] = $article->rejected_contributors_ref_id;
-        $newWaiting = [];
+        $newWaitings = [];
 
         foreach ($deletedWaitingContributors as $value) {
             if ($key = array_search($value, $contributors['waiting'])) {
@@ -198,7 +198,7 @@ class ArticleRepository
                  * we're now certain that these are the real new contributors that are not
                  *  duplicated, so we can send the invitation links for them free of mind!
                  */
-                $newWaiting[] = $value;
+                $newWaitings[] = $value;
             }
         }
         foreach ($deletedRejectedContributors as $value) {
@@ -216,7 +216,7 @@ class ArticleRepository
                     WHERE article_id = ?", [$request->title, $request->body, $now, $waiting
             , $rejected, $article->article_id]);
 
-        event(new StoreArticleEvent($article, $request->messages, $newWaiting));
+        event(new StoreArticleEvent($article, $request->messages, $newWaitings));
 
 
     }
