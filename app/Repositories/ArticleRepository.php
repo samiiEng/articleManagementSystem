@@ -218,7 +218,7 @@ class ArticleRepository
 
         event(new StoreArticleEvent($article, $request->messages, $newWaitings));
 
-
+        return "The article is successfully updated!";
     }
 
     public function find($id)
