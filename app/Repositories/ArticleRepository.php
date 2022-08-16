@@ -120,8 +120,37 @@ class ArticleRepository
     public function editArticle($article)
     {
         $contributors = explode(',', $article->waiting_contributors_ref_id);
+        //author's article
         $result[] = $article;
 
+        //list of contributors with their status and some info about them
+        $lists = json_decode(DB::select("SELECT waiting_contributors_ref_id, rejected_contributors_ref_id, contributors_ref_id FROM articles WHERE article_id = ?", [$article->article_id])[0], true);
+
+        //$lists array has three indexes (waiting_contributors_ref_id, rejected_contributors_ref_id, contributors_ref_id)
+        $length = 3;
+        $i = 0;
+        foreach ($lists['waiting_contributors_ref_id'] as $list) {
+            ++$i;
+            foreach ($list as $key => $value) {
+                if ($i == 3)
+                    $values = json_decode($value, true);
+                else
+                    $values = explode(',', $value);
+
+                $userItem = DB::select("SELECT * FROM users WHERE user_id = ?", [$item]);
+                foreach ($values as $item) {
+                    if ($i == 1)
+                        $result['waiting'] = $userItem;
+                    else if ($i == 2)
+                        $result['rejected'] = $userItem;
+                    else if ($i == 3)
+                        $result['accepted'] = $userItem;
+                }
+            }
+        }
+
+
+        //accepted contributors' articles
         foreach ($contributors as $contributor) {
             $acceptedContributors = json_decode(DB::select("SELECT contributors_ref_id FROM articles WHERE article_id = ?", [$article->article_id])[0], true);
             foreach ($acceptedContributors as $key => $value) {
