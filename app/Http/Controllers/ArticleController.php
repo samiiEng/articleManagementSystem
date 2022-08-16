@@ -90,9 +90,11 @@ class ArticleController extends Controller
      * @param \App\Models\Article $article
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateArticleRequest $request, Article $article)
+    public function update(UpdateArticleRequest $request, Article $article, ArticleRepository $articleRepository)
     {
-        //
+        $request = $request->validated();
+        $results = structuredJson($articleRepository->updateArticle($request, $article));
+        return response()->json($results[0],$results[1],$results[2],$results[3]);
     }
 
     /**

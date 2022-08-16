@@ -165,8 +165,59 @@ class ArticleRepository
 
     }
 
-    public function updateArticle()
+    /*
+     * convention ==> {"title" : "", "body" : "", "deletedWaitingContributors" : "", "deletedRejectedContributors" : "", "newWaitingContributors" : ""}
+     */
+    public function updateArticle($request, $article)
     {
+        $now = $request->isPublished ? Carbon::now() : null;
+
+
+        $deletedWaitingContributors = explode(',', $request->deletedWaitingContributors);
+        $newWaitingContributors = explode(',', $request->newWaitingContributors);
+        $deletedRejectedContributors = explode(',', $request->deletedRejectedContributors);
+
+        $contributors['waiting'] = $article->waiting_contributors_ref_id;
+        $contributors['rejected'] = $article->rejected_contributors_ref_id;
+        $newWaiting = [];
+
+        foreach ($deletedWaitingContributors as $value) {
+            if ($key = array_search($value, $contributors['waiting'])) {
+                unset($contributors['waiting'][$key]);
+            }
+        }
+
+        /*
+         * Put new after to make sure that even if someone is deleted if the user decided to add
+         * that contributor again, maybe he/she had subconsciously a reason for that!
+         */
+        foreach ($newWaitingContributors as $value) {
+            if (!array_search($value, $contributors['waiting'])) {
+                $contributors['waiting'][] = $value;
+                /*
+                 * we're now certain that these are the real new contributors that are not
+                 *  duplicated, so we can send the invitation links for them free of mind!
+                 */
+                $newWaiting[] = $value;
+            }
+        }
+        foreach ($deletedRejectedContributors as $value) {
+            if ($key = array_search($value, $contributors['rejected'])) {
+                unset($contributors['rejected'][$key]);
+            }
+        }
+
+        $waiting = implode(',', $contributors['waiting']);
+        $rejected = implode(',', $contributors['rejected']);
+
+
+        DB::update("UPDATE articles SET title = ?, body = ?, publish_date = ?,
+                    waiting_contributors_ref_id = ?, rejected_contributors_ref_id = ?
+                    WHERE article_id = ?", [$request->title, $request->body, $now, $waiting
+            , $rejected, $article->article_id]);
+
+        event(new StoreArticleEvent($article, $request->messages, $newWaiting));
+
 
     }
 

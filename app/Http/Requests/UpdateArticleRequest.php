@@ -33,7 +33,15 @@ class UpdateArticleRequest extends FormRequest
                 ];
             } else if ($method == "update") {
                 return [
-
+                    "title" => "required|string|max:100",
+                    "body" => "required|longtext",
+                    "isPublished" => "required|boolean",
+                    "deletedWaitingContributors" => "required|string",
+                    "deletedRejectedContributors" => "required|string",
+                    "newWaitingContributors" => "required|string",
+                    "messages.*.contributorID" => "required|integer",
+                    "messages.*.body" => "nullable|longtext",
+                    "messages.*.title" => "nullable|string|max:50"
                 ];
             }
     }

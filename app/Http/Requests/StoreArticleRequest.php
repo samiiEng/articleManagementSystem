@@ -33,7 +33,7 @@ class StoreArticleRequest extends FormRequest
             "publishedArticles" => "nullable|string",
             "categories" => "required|string",
             "tags" => "nullable|string",
-            "messages.*.contributorID" => "nullable|integer",
+            "messages.*.contributorID" => "required|integer",
             "messages.*.title" => "nullable|string|max:100",
             "messages.*.body" => "nullable|string"
         ];
