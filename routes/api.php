@@ -22,16 +22,22 @@ use \App\Http\Controllers\ArticleController;
 use \App\Http\Controllers\Filter\FilterController;
 
 Route::prefix('dashboard/')->name('dashboard.')->group(function () {
+
+    //define article
     Route::get('defineArticle', [ArticleController::class, 'create'])->name('defineArticle.create');
+    Route::post('storeArticle', [ArticleController::class, 'store'])->name('storeArticle');
+
+    //filtering
     Route::post('filterUsernamesByDepartments', [FilterController::class, 'filterUsernamesByDepartments'])->name('filterUsernamesByDepartments');
     Route::post('filterCategoriesByDepartments', [FilterController::class, 'filterCategoriesByDepartments'])->name('filterCategoriesByDepartments');
     Route::post('filterArticlesByCategoriesDepartments', [FilterController::class, 'filterArticlesByCategoriesDepartments'])->name('filterArticlesByCategoriesDepartments');
-    Route::post('storeArticle', [ArticleController::class, 'store'])->name('storeArticle');
+
+    //edit article
     Route::post('deleteContributor', [ArticleController::class, 'deleteContributor'])->name('deleteContributor');
 
-    /*Route::get('hello', function (Request $request) {
+    Route::get('hello', function (Request $request) {
 
-    });*/
+    });
 });
 
 Route::get('invitationResponse/{articleID}/{userID}/{parameter}', [ArticleController::class, 'invitationResponse'])->name('invitationResponse')->middleware(['signed']);
