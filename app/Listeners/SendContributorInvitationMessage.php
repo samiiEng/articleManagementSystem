@@ -42,10 +42,10 @@ class SendContributorInvitationMessage
 
             $title = !empty($message['title']) ? $message['title'] : $defaultMessage[0]->title;
             $body = !empty($message['body']) ? $message['body'] : $defaultMessage[0]->body;
-            $body .= "Accept : " . $acceptLink . "<br>Reject: " . $rejectLink . "<br>";
-
+            $body .= "\r\n Accept : " . $acceptLink . "\r\n Reject: " . $rejectLink;
+            dd($title, $body, $from, $to,  $now);
             DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, status, created_at)
-                 VALUES($title, $body, $from, $to, 'waiting', $now)");
+                 VALUES($title, $body, $from, $to, waiting, $now)");
         }
 
     }
