@@ -21,10 +21,10 @@ class ArticleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, ArticleRepository $articleRepository, $isPublished = 0)
+    public function index(Request $request, ArticleRepository $articleRepository, $isPublished = 0, $showDeleted = 0)
     {
         $user = $request->user();
-        $results = structuredJson($articleRepository->index($user, $isPublished));
+        $results = structuredJson($articleRepository->index($user, $isPublished, $showDeleted));
         return response()->json($results[0], $results[1], $results[2], $results[3]);
 
     }
@@ -77,9 +77,9 @@ class ArticleController extends Controller
      * @param \App\Models\Article $article
      * @return \Illuminate\Http\Response
      */
-    public function edit(Article $article, ArticleRepository $articleRepository)
+    public function edit(ArticleRepository $articleRepository, Article $article, $revisionNumber = null)
     {
-        $results = structuredJson($articleRepository->editArticle($article));
+        $results = structuredJson($articleRepository->editArticle($article, $revisionNumber));
         return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
 

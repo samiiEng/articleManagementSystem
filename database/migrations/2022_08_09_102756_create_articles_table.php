@@ -29,12 +29,14 @@ return new class extends Migration
             $table->string('parent_ref_id')->nullable();
             $table->unsignedBigInteger('revision_ref_id')->nullable();
             $table->unsignedInteger('revision_number')->nullable();
+            $table->unique(['revision_ref_id', 'revision_number']);
             $table->dateTimeTz('publish_date')->nullable();
             $table->boolean('is_last_revision');
             $table->string('status', 50);
             $table->timestampsTz();
             $table->softDeletesTz();
         });
+
     }
 
     /**

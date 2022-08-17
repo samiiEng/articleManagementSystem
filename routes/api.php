@@ -32,14 +32,14 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
     Route::post('filterCategoriesByDepartments', [FilterController::class, 'filterCategoriesByDepartments'])->name('filterCategoriesByDepartments');
     Route::post('filterArticlesByCategoriesDepartments', [FilterController::class, 'filterArticlesByCategoriesDepartments'])->name('filterArticlesByCategoriesDepartments');
 
-    //*******************list articles
+    //*******************list articles then edit or delete them or restore them
     /* 1- Does filter by if it is or is not published
      * 2- For sending less data to the front-end we let the user check the isPublished filter checkbox and
      * get the data from the server By Ajax or ....
      */
-    Route::get('listArticles/{isPublished}', [ArticleController::class, 'index'])->name('listArticles')->where(['isPublished' => '[01]']);
+    Route::get('listArticles/{isPublished}/{showDeleted}', [ArticleController::class, 'index'])->name('listArticles')->where(['isPublished' => '[01]']);
     Route::get('showArticle/{articleID}', [ArticleController::class, 'show'])->name('showArticle');
-    Route::get('editArticle/{articleID}', [ArticleController::class, 'edit'])->name('editArticle');
+    Route::get('editArticle/{articleID}/{revisionNumber}', [ArticleController::class, 'edit'])->name('editArticle');
     Route::post("updateArticle/{articleID}", [ArticleController::class, 'update'])->name('updateArticle');
     Route::get('deleteArticle/{articleID}', [ArticleController::class, 'destroy'])->name('softDeleteArticle');
     Route::get('restoreArticle/{articleID}', [ArticleController::class, 'restore'])->name('restoreArticle');

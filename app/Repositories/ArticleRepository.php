@@ -13,20 +13,22 @@ class ArticleRepository
 {
 
     /*
-     * Gives the last revision of the articles and if set only the published ones
+     * Gives the last revision of the articles and if the $isPublished is set, it shows only the published ones,
+     * and if the $showDeleted is set, it shows the soft deleted ones.
      */
-    public function index($user, $isPublished)
+    public function index($user, $isPublished, $showDeleted)
     {
         $isPublished = $isPublished ? " AND publish_date IS NOT NULL" : "";
+        $showDeleted = $showDeleted ? " AND deleted_at IS NOT NULL" : "";
 
         if ($user->role == 'normal') {
             //Gets his/her articles
 
-            return DB::select("SELECT * FROM articles WHERE user_ref_id = ? AND is_last_revision = 1 $isPublished", [$user->id]);
+            return DB::select("SELECT * FROM articles WHERE user_ref_id = ? AND is_last_revision = 1 $isPublished $showDeleted", [$user->id]);
         } elseif ($user->role == 'department_manager') {
             //Only gets the articles belong to the authors of this department
 
-            $users = DB::select("SELECT user_id FROM users WHERE department_ref_id = ? AND is_last_revision = 1 $isPublished", [$user->department_ref_id]);
+            $users = DB::select("SELECT user_id FROM users WHERE department_ref_id = ? AND is_last_revision = 1 $isPublished $showDeleted", [$user->department_ref_id]);
             $length = count($users);
             $i = 0;
             $conditions = "";
@@ -39,7 +41,7 @@ class ArticleRepository
                     $conditions .= "user_ref_id = ?";
                 $values[] = $value->id;
             }
-            $conditions .= $isPublished;
+            $conditions .= $isPublished . $showDeleted;
 
             return DB::select("SELECT * FROM articles WHERE is_last_revision = 1 AND ($conditions))", $values);
         } else {
@@ -117,8 +119,10 @@ class ArticleRepository
         return "The article is updated!";
     }
 
-    public function editArticle($article)
+    public function editArticle($article, $revisionNumber)
     {
+        if ($revisionNumber)
+            $article = DB::select("SELECT * FROM articles WHERE revision_number = ? AND revision_ref_id = ?", [$revisionNumber, $article->article_id]);
 
         //author's article
         $result[] = $article;
