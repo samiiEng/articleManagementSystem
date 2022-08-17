@@ -119,48 +119,53 @@ class ArticleRepository
 
     public function editArticle($article)
     {
-        $contributors = explode(',', $article->waiting_contributors_ref_id);
+
         //author's article
         $result[] = $article;
 
         //list of contributors with their status and some info about them
-        $lists = json_decode(DB::select("SELECT waiting_contributors_ref_id, rejected_contributors_ref_id, contributors_ref_id FROM articles WHERE article_id = ?", [$article->article_id])[0], true);
+        $lists = [$article->waiting_contributors_ref_id, $article->rejected_contributors_ref_id, $article->contributors_ref_id];
 
         //$lists array has three indexes (waiting_contributors_ref_id, rejected_contributors_ref_id, contributors_ref_id)
         $length = 3;
         $i = 0;
-        foreach ($lists['waiting_contributors_ref_id'] as $list) {
+        foreach ($lists as $list) {
             ++$i;
+            //All the results of a query builder or eloquent model are json objects comprised of pairs of key/value(table field name/value)
             foreach ($list as $key => $value) {
+                //only the third index of $lists which is contributor_ref_id is json and needs to be decoded
                 if ($i == 3)
                     $values = json_decode($value, true);
                 else
                     $values = explode(',', $value);
 
-                $userItem = DB::select("SELECT * FROM users WHERE user_id = ?", [$item]);
+
+                //Instead of having some userIDs we're replacing them with their whole model instance
                 foreach ($values as $item) {
+                    $userItem = DB::select("SELECT * FROM users WHERE user_id = ?", [$item])[0];
                     if ($i == 1)
-                        $result['waiting'] = $userItem;
+                        $result['waiting'][] = $userItem;
                     else if ($i == 2)
-                        $result['rejected'] = $userItem;
+                        $result['rejected'][] = $userItem;
                     else if ($i == 3)
-                        $result['accepted'] = $userItem;
+                        $result['accepted'][] = $userItem;
                 }
             }
         }
 
 
         //accepted contributors' articles
-        foreach ($contributors as $contributor) {
-            $acceptedContributors = json_decode(DB::select("SELECT contributors_ref_id FROM articles WHERE article_id = ?", [$article->article_id])[0], true);
-            foreach ($acceptedContributors as $key => $value) {
-                $user = DB::select("SELECT username, first_name, last_name FROM users WHERE user_id = ?", [$key])[0];
 
-                $result['contributorsArticles'][] = DB::select("SELECT title, body, article_code, article_id FROM articles WHERE article_id = ?", [$value])[0]
-                    . $user . DB::select("SELECT name, english_name FROM departments WHERE department_id = ?", [$user->department_ref_id])[0];
-            }
+        $acceptedContributors = json_decode($article->contributors_ref_id, true);
+        foreach ($acceptedContributors as $key => $value) {
+            $user = DB::select("SELECT username, first_name, last_name FROM users WHERE user_id = ?", [$key])[0];
 
+            //putting the whole article of a user with the user info and even the name of his/her department
+            $result['contributorsArticles'][] = DB::select("SELECT title, body, article_code, article_id FROM articles WHERE article_id = ?", [$value])[0]
+                . $user . DB::select("SELECT name, english_name FROM departments WHERE department_id = ?", [$user->department_ref_id])[0];
         }
+
+
         return $result;
 
     }
@@ -244,21 +249,23 @@ class ArticleRepository
     public function invitationResponse($articleID, $userID, $parameter)
     {
         $article = DB::select("SELECT contributors_ref_id, waiting_contributors_ref_id, rejected_contributors_ref_id FROM articles WHERE article_id = ?", [$articleID]);
-        $contributors = !empty($article[0]->contributors_ref_id) ? explode(',', $article[0]->contributors_ref_id) : [];
+        $contributors = !empty($article[0]->contributors_ref_id) ? json_decode($article[0]->contributors_ref_id, true) : [];
         $waitingContributors = !empty($article[0]->waiting_contributors_ref_id) ? explode(',', $article[0]->waiting_contributors_ref_id) : [];
         $rejectedContributors = !empty($article[0]->rejected_contributors_ref_id) ? explode(',', $article[0]->rejected_contributors_ref_id) : [];
-        $hasAlreadyDeletedFromWaitingListByAuthor = false;;
+        /*$hasNotAlreadyDeletedFromWaitingListByAuthor or maybe the invitation list had been processed before and
+        therefore deleted the contributore from the waiting list*/
+        $hasNotAlreadyDeletedFromWaitingListByAuthor = false;;
         $i = 0;
         foreach ($waitingContributors as $waitingContributor) {
             if ($waitingContributor == $userID) {
                 unset($waitingContributors[$i]);
-                $hasAlreadyDeletedFromWaitingListByAuthor = true;
+                $hasNotAlreadyDeletedFromWaitingListByAuthor = true;
                 break;
             }
             ++$i;
         }
 
-        if ($hasAlreadyDeletedFromWaitingListByAuthor) {
+        if ($hasNotAlreadyDeletedFromWaitingListByAuthor) {
 
             //Updating the waiting_conributors_id to the new list without that id
             $waitingContributors = implode(',', $waitingContributors);
@@ -266,17 +273,26 @@ class ArticleRepository
 
             //Updating the accept/rejected_conributors_id to the new list with that id
             if ($parameter == 'accept') {
-                $contributors[] = $userID;
-                $contributors = implode(',', $contributors);
+                $ifUserAlreadyExists = false;
+                foreach ($contributors as $key => $value)
+                    if ($key == $userID)
+                        $ifUserAlreadyExists = true;
+                if (!$ifUserAlreadyExists)
+                    $contributors[] = $userID;
+                $contributors = json_encode($contributors);
                 DB::update("UPDATE articles SET contributors_ref_id = $contributors WHERE article_id = ?", [$articleID]);
             } else {
-                $rejectedContributors[] = $userID;
+                if (array_search($userID, $rejectedContributors))
+                    $rejectedContributors[] = $userID;
                 $rejectedContributors = implode(',', $rejectedContributors);
                 DB::update("UPDATE articles SET rejected_contributors_ref_id = $rejectedContributors  WHERE article_id = ?", [$articleID]);
             }
 
         }
-        return "The clicked invitation link is successfully processed!";
+        if ($hasNotAlreadyDeletedFromWaitingListByAuthor)
+            return "The clicked invitation link is successfully processed!";
+        else
+            return "This link is no longer working, maybe you have used it before or the author has deleted you from the contributors' list!";
 
     }
 

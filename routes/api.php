@@ -55,7 +55,9 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
 
     Route::get('hello', function (Request $request) {
 
+
     });
 });
 
+//Accept/Reject the invitation
 Route::get('invitationResponse/{articleID}/{userID}/{parameter}', [ArticleController::class, 'invitationResponse'])->name('invitationResponse')->middleware(['signed']);
