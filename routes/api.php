@@ -60,5 +60,5 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
     });
 });
 
-//Accept/Reject the invitation
+//Accept/Reject the invitation (Because no message is going to be composed by the user so this route is out of the dashboard route group.)
 Route::get('invitationResponse/{articleID}/{userID}/{parameter}', [ArticleController::class, 'invitationResponse'])->name('invitationResponse')->middleware(['signed']);
