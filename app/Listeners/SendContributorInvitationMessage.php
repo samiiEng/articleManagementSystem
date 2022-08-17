@@ -88,5 +88,9 @@ class SendContributorInvitationMessage
         $invitationMessagesIDs = json_encode($invitationMessagesIDs);
         DB::update("UPDATE articles SET invitation_messages_ref_id = ? WHERE article_id = ?", [$invitationMessagesIDs, $article->article_id]);
 
+
+        if ($event->ifStopTheNextListener)
+            return false;
+
     }
 }

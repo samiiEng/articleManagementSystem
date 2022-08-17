@@ -248,7 +248,7 @@ class ArticleRepository
                 unset($parentsIDs[$key]);
             }
             $parentsIDs = implode(',', $parentsIDs);
-            DB::update("UPDATE articles SET parent_ref_id = ? WHERE article_id = ?", [$parentsIDs, $parentsIDs]);
+            DB::update("UPDATE articles SET parent_ref_id = ? WHERE article_id = ?", [$parentsIDs, $articleID]);
         }
 
 
@@ -269,10 +269,15 @@ class ArticleRepository
                                 this project is closed.", $article->user_id, $key, Carbon::now()]);
         }
 
+        return "The article is temporarily deleted, you can decide to restore it later.";
+
     }
 
-    public function forceDelete()
+    public function forceDelete($article)
     {
+        DB::delete("DELETE FROM articles WHERE article_id = ?", [$article->article_id]);
+
+        return "The article is completely deleted from the database";
 
     }
 
@@ -291,27 +296,23 @@ class ArticleRepository
                 $parentsIDs[] = $articleID;
             }
             $parentsIDs = implode(',', $parentsIDs);
-            DB::update("UPDATE articles SET parent_ref_id = ? WHERE article_id = ?", [$parentsIDs, $parentsIDs]);
+            DB::update("UPDATE articles SET parent_ref_id = ? WHERE article_id = ?", [$parentsIDs, $articleID]);
         }
 
 
         //*************Sending invitation messages for the waiting contributors
-        foreach ($waitingContributors as $contributor) {
-            foreach ($invitationMessages as $key => $value) {
-                if ($key == $contributor) {
-                    event(new StoreArticleEvent($article, [], []));
-                }
-            }
-        }
+
+        event(new StoreArticleEvent($article, [], [], true));
 
 
         //*************Send a message to the accepted contributors to notify them that the project is closed.
         foreach ($acceptedContributors as $key => $value) {
             DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, created_at)
-                                VALUES(?,?,?,?,?)", ["The project is closed", "Hi dear colleague. Unfortunately
-                                this project is closed.", $article->user_id, $key, Carbon::now()]);
+                                VALUES(?,?,?,?,?)", ["The project is reopened", "Hi dear colleague. Unfortunately
+                                this project is reopened.", $article->user_id, $key, Carbon::now()]);
         }
 
+        return "The article is restored";
 
     }
 

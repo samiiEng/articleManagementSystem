@@ -109,9 +109,15 @@ class ArticleController extends Controller
         return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
 
-    public function forceDelete(Article $article)
-    {
+    public function restore(Article $article, ArticleRepository $articleRepository){
+        $results = structuredJson($articleRepository->restoreDeleted($article));
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
+    }
 
+    public function forceDelete(Article $article, ArticleRepository $articleRepository)
+    {
+        $results = structuredJson($articleRepository->forceDelete($article));
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
 
     public function invitationResponse(ArticleRepository $articleRepository, $articleID, $userID, $parameter)
