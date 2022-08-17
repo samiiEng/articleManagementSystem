@@ -94,7 +94,7 @@ class ArticleController extends Controller
     {
         $request = $request->validated();
         $results = structuredJson($articleRepository->updateArticle($request, $article));
-        return response()->json($results[0],$results[1],$results[2],$results[3]);
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
     }
 
     /**
@@ -103,9 +103,15 @@ class ArticleController extends Controller
      * @param \App\Models\Article $article
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Article $article)
+    public function destroy(Article $article, ArticleRepository $articleRepository)
     {
-        //
+        $results = structuredJson($articleRepository->softDelete($article));
+        return response()->json($results[0], $results[1], $results[2], $results[3]);
+    }
+
+    public function forceDelete(Article $article)
+    {
+
     }
 
     public function invitationResponse(ArticleRepository $articleRepository, $articleID, $userID, $parameter)

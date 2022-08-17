@@ -41,7 +41,7 @@ Route::prefix('dashboard/')->name('dashboard.')->group(function () {
     Route::get('showArticle/{articleID}', [ArticleController::class, 'show'])->name('showArticle');
     Route::get('editArticle/{articleID}', [ArticleController::class, 'edit'])->name('editArticle');
     Route::post("updateArticle/{articleID}", [ArticleController::class, 'update'])->name('updateArticle');
-//    Route::get('deleteArticle/{articleID}', [ArticleController::class, 'softDelete'])->name('deleteArticle');
+    Route::get('deleteArticle/{articleID}', [ArticleController::class, 'destroy'])->name('softDeleteArticle');
 
 
     //*******************delete contributor

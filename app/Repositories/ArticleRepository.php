@@ -231,8 +231,43 @@ class ArticleRepository
         return DB::select("SELECT * FROM articles WHERE article_id = ?", [$id]);
     }
 
-    public function softDelete()
+    public function softDelete($article)
     {
+        //*************Before anyone click on the accept invitation link we need to quickly delete the article.
+        //Notice that the $article variable has a copy of the record and the deletion of the record in the database has obviously no effect on it.
+        DB::delete("UPDATE articles SET deleted_at = ? WHERE article_id = ?", [Carbon::now(), $article->article_id]);
+
+        $waitingContributors = explode(',', $article->waiting_contributors_ref_id);
+        $acceptedContributors = json_decode($article->contributors_ref_id, true);
+        $invitationMessages = json_decode($article->invitation_messages_ref_id, true);
+
+        //*************Deleting the article_id from the parent_ref_id field of the acceptedContributors' articles table record
+        foreach ($acceptedContributors as $articleID) {
+            $parentsIDs = explode(',', DB::select("SELECT parent_ref_id FROM articles WHERE article_id = ?", [$articleID])[0]->parent_ref_id);
+            if ($key = array_search($article->article_id, $parentsIDs)) {
+                unset($parentsIDs[$key]);
+            }
+            $parentsIDs = implode(',', $parentsIDs);
+            DB::update("UPDATE articles SET parent_ref_id = ? WHERE article_id = ?", [$parentsIDs, $parentsIDs]);
+        }
+
+
+        //*************Deleting the invitation message from the waiting contributors mailbox
+        foreach ($waitingContributors as $contributor) {
+            foreach ($invitationMessages as $key => $value) {
+                if ($key == $contributor) {
+                    DB::delete("DELETE FROM messages WHERE message_id = ?", [$value]);
+                }
+            }
+        }
+
+
+        //*************Send a message to the accepted contributors to notify them that the project is closed.
+        foreach ($acceptedContributors as $key => $value) {
+            DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, created_at)
+                                VALUES(?,?,?,?,?)", ["The project is closed", "Hi dear colleague. Unfortunately
+                                this project is closed.", $article->user_id, $key, Carbon::now()]);
+        }
 
     }
 
@@ -241,8 +276,42 @@ class ArticleRepository
 
     }
 
-    public function restoreDeleted()
+    public function restoreDeleted($article)
     {
+        DB::delete("UPDATE articles SET deleted_at = ? WHERE article_id = ?", [null, $article->article_id]);
+
+        $waitingContributors = explode(',', $article->waiting_contributors_ref_id);
+        $acceptedContributors = json_decode($article->contributors_ref_id, true);
+        $invitationMessages = json_decode($article->invitation_messages_ref_id, true);
+
+        //*************Adding the article_id from the parent_ref_id field of the acceptedContributors' articles table record
+        foreach ($acceptedContributors as $articleID) {
+            $parentsIDs = explode(',', DB::select("SELECT parent_ref_id FROM articles WHERE article_id = ?", [$articleID])[0]->parent_ref_id);
+            if (!array_search($article->article_id, $parentsIDs)) {
+                $parentsIDs[] = $articleID;
+            }
+            $parentsIDs = implode(',', $parentsIDs);
+            DB::update("UPDATE articles SET parent_ref_id = ? WHERE article_id = ?", [$parentsIDs, $parentsIDs]);
+        }
+
+
+        //*************Sending invitation messages for the waiting contributors
+        foreach ($waitingContributors as $contributor) {
+            foreach ($invitationMessages as $key => $value) {
+                if ($key == $contributor) {
+                    event(new StoreArticleEvent($article, [], []));
+                }
+            }
+        }
+
+
+        //*************Send a message to the accepted contributors to notify them that the project is closed.
+        foreach ($acceptedContributors as $key => $value) {
+            DB::insert("INSERT INTO messages (title, body, from_ref_id, to_ref_id, created_at)
+                                VALUES(?,?,?,?,?)", ["The project is closed", "Hi dear colleague. Unfortunately
+                                this project is closed.", $article->user_id, $key, Carbon::now()]);
+        }
+
 
     }
 
@@ -267,20 +336,32 @@ class ArticleRepository
 
         if ($hasNotAlreadyDeletedFromWaitingListByAuthor) {
 
-            //Updating the waiting_conributors_id to the new list without that id
+            //Updating the waiting_contributors_id to the new list without that id
             $waitingContributors = implode(',', $waitingContributors);
             DB::update("UPDATE articles SET waiting_contributors_ref_id = $waitingContributors WHERE article_id = ?", [$articleID]);
 
-            //Updating the accept/rejected_conributors_id to the new list with that id
+            //Updating the accept/rejected_contributors_id to the new list with that id
             if ($parameter == 'accept') {
+                //Determining if the user already exists in the contributors_ref_id field
                 $ifUserAlreadyExists = false;
                 foreach ($contributors as $key => $value)
                     if ($key == $userID)
                         $ifUserAlreadyExists = true;
+
+                //**************Define an article for the user that has accepted the invitaion
+                $now = Carbon::now();
+                //19 character unique article_code
+                $articleCode = random_int(100000000000000000, 9111111111111111111);
+
+                DB::insert("INSERT INTO articles (article_code, user_ref_id, parent_ref_id, is_last_revision, status, created_at) VALUES(?,?,?,?,?,?)", [$articleCode, $userID, $articleID, 1, 'pending', $now]);
+                $definedArticleID = DB::getPdo()->lastInsertId();
+
+                //**************Insert userID/articleID in the contributors_ref_id field
                 if (!$ifUserAlreadyExists)
-                    $contributors[] = $userID;
+                    $contributors[$userID] = $definedArticleID;
                 $contributors = json_encode($contributors);
                 DB::update("UPDATE articles SET contributors_ref_id = $contributors WHERE article_id = ?", [$articleID]);
+
             } else {
                 if (array_search($userID, $rejectedContributors))
                     $rejectedContributors[] = $userID;

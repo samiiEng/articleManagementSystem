@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id('article_id');
             $table->unsignedBigInteger('article_code')->unique();
-            $table->string('title', 100);
+            $table->string('title', 100)->nullable();
             $table->longText('body')->nullable();
-            $table->string('category_department_ref_id', 50);
-            $table->string('tag_ref_id', 50);
+            $table->string('category_department_ref_id', 50)->nullable();
+            $table->string('tag_ref_id', 50)->nullable();
             $table->unsignedBigInteger('user_ref_id');
             $table->json('contributors_ref_id')->nullable()->comment("pairs of contributorID/articleID");
             $table->string('waiting_contributors_ref_id', 150)->nullable();
